@@ -3,6 +3,25 @@ import { Fetch } from 'react-request';
 import {Route, Link, BrowserRouter} from 'react-router-dom';
 import Card from '@material-ui/core/Card';
 import Typography from '@material-ui/core/Typography';
+import {withStyles} from "@material-ui/core/es/styles/index";
+
+const styles = {
+    card: {
+        minWidth: 275,
+        maxWidth: 500,
+    },
+    bullet: {
+        display: 'inline-block',
+        margin: '0 2px',
+        transform: 'scale(0.8)',
+    },
+    title: {
+        fontSize: 14,
+    },
+    pos: {
+        marginBottom: 12,
+    },
+};
 
 function Stars(props){
     const stars = Object.keys(props.list).map((star) =>
@@ -88,5 +107,5 @@ class Movies extends Component {
     }
 }
 
-export default Movies;
+export default withStyles(styles) (Movies);
 export { Stars };
