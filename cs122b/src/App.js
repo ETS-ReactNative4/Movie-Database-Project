@@ -1,28 +1,50 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import { Fetch } from 'react-request';
 import './App.css';
+import {Route} from 'react-router-dom';
+import {BrowserRouter} from "react-router-dom";
+import Card from '@material-ui/core/Card';
+import Typography from '@material-ui/core/Typography';
+import Movies from "./Movies/Movies.js";
+
+const styles = {
+    card: {
+        minWidth: 300,
+    },
+    bullet: {
+        display: 'inline-block',
+        margin: '0 2px',
+        transform: 'scale(0.8)',
+    },
+    title: {
+        fontSize: 14,
+    },
+    pos: {
+        marginBottom: 12,
+    },
+};
 
 class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
-  }
+    render(){
+        return (
+            <div>
+                <header>
+                    <nav>
+                        <ul>
+                            <li><a href="/">Top Twenty</a></li>
+                            <li><a href="/movie">Stars</a></li>
+                            <li><a href="/star">Movie</a></li>
+                        </ul>
+                    </nav>
+                </header>
+                <BrowserRouter>
+                    <div>
+                        <Route path="/" exact component={Movies}/>
+                    </div>
+                </BrowserRouter>
+            </div>
+        );
+    }
 }
 
 export default App;
