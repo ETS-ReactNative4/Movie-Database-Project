@@ -32,7 +32,7 @@ public class SingleMovie extends HttpServlet {
             // declare statement
             Statement statement = connection.createStatement();
             String movie = request.getParameter("id");
-            String query = "SELECT * from movies where id='"+movie+"'";
+            String query = "SELECT * from movies left join ratings on movies.id=ratings.movieId where movies.id='"+movie+"'";
             ResultSet resultSet = statement.executeQuery(query);
             JSONObject stuff = new JSONObject();
             while(resultSet.next()){
@@ -46,6 +46,7 @@ public class SingleMovie extends HttpServlet {
                 stuff.put("title",title);
                 stuff.put("year",year);
                 stuff.put("director",director);
+                stuff.put("rating", resultSet.getFloat("rating"));
                 String genre_query = "SELECT name FROM genres where id in (select genreId from genres_in_movies where movieId=\'"+movie+"\')";
                 statement = connection.createStatement();
                 ResultSet genreSet = statement.executeQuery(genre_query);
