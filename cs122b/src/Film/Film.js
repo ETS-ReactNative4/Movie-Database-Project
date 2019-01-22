@@ -10,7 +10,7 @@ class Film extends Component {
     render(){
         const query = queryString.parse(this.props.location.search);
         return (
-            <Fetch url={"http://localhost:8080/cs122b/movies?id="+query.id}>
+            <Fetch url={"http://"+window.location.hostname+":8080/cs122b/movies?id="+query.id}>
                 {({ fetching, failed, data }) => {
                     if (fetching) {
                         return <div>Loading data...</div>;
