@@ -1,5 +1,6 @@
 package com.cs122b;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.servlet.ServletException;
@@ -60,13 +61,12 @@ public class Movies extends HttpServlet {
                 }
                 stuff.put("genres", genres);
                 // Start with star list
-                String star_query = "SELECT name FROM stars where id in (select starId from stars_in_movies where movieId=\'"+id+"\')";
+                String star_query = "SELECT name, id FROM stars where id in (select starId from stars_in_movies where movieId=\'"+id+"\')";
                 statement = connection.createStatement();
                 ResultSet starSet = statement.executeQuery(star_query);
-                ArrayList<String> stars = new ArrayList<>();
-                while(starSet.next()){
-                    stars.add(starSet.getString("name"));
-                }
+                //ArrayList<String> stars = new ArrayList<>();
+                JSONArray stars = new JSONArray();
+                SingleMovie.getStarsNameId(starSet, stars);
                 stuff.put("stars", stars);
             }
             connection.close();

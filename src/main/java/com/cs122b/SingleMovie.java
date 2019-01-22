@@ -1,5 +1,6 @@
 package com.cs122b;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.servlet.ServletException;
@@ -54,13 +55,11 @@ public class SingleMovie extends HttpServlet {
                 }
                 stuff.put("genres", genres);
                 // Start with star list
-                String star_query = "SELECT name FROM stars where id in (select starId from stars_in_movies where movieId=\'"+movie+"\')";
+                String star_query = "SELECT name, id FROM stars where id in (select starId from stars_in_movies where movieId=\'"+movie+"\')";
                 statement = connection.createStatement();
                 ResultSet starSet = statement.executeQuery(star_query);
-                ArrayList<String> stars = new ArrayList<>();
-                while(starSet.next()){
-                    stars.add(starSet.getString("name"));
-                }
+                JSONArray stars = new JSONArray();
+                getStarsNameId(starSet, stars);
                 stuff.put("stars", stars);
             }
             connection.close();
@@ -72,6 +71,15 @@ public class SingleMovie extends HttpServlet {
             error.put("error",e);
             ret.println(error);
             ret.flush();
+        }
+    }
+
+    static void getStarsNameId(ResultSet starSet, JSONArray stars) throws SQLException {
+        while(starSet.next()){
+            JSONObject star = new JSONObject();
+            star.put("name",starSet.getString("name"));
+            star.put("id",starSet.getString("id"));
+            stars.put(star);
         }
     }
 }
