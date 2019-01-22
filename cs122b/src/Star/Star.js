@@ -27,7 +27,7 @@ class Star extends Component {
     render(){
         const query = queryString.parse(this.props.location.search);
         return (
-            <Fetch url={"http://"+window.location.hostname+":8080/cs122b/star?id="+query.id}>
+            <Fetch url={"http://cors-anywhere.herokuapp.com/"+window.location.hostname+":8080/cs122b/star?id="+query.id}>
                 {({ fetching, failed, data }) => {
                     if (fetching) {
                         return <div>Loading data...</div>;

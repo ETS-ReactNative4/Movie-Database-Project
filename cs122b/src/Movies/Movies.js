@@ -39,7 +39,7 @@ function Genres(props){
 class Movies extends Component {
     render(){
         return (
-            <Fetch url={"http://"+window.location.hostname+":8080/cs122b/top20"}>
+            <Fetch url={"http://cors-anywhere.herokuapp.com/"+window.location.hostname+":8080/cs122b/top20"}>
                 {({ fetching, failed, data }) => {
                     if (fetching) {
                         return <div>Loading data...</div>;
