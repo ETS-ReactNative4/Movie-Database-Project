@@ -1,29 +1,45 @@
 import React, { Component } from 'react';
 import { Fetch } from 'react-request';
+import {Route, Link, BrowserRouter} from 'react-router-dom';
 import Card from '@material-ui/core/Card';
 import Typography from '@material-ui/core/Typography';
 
-const styles = {
-    card: {
-        minWidth: 300,
-    },
-    bullet: {
-        display: 'inline-block',
-        margin: '0 2px',
-        transform: 'scale(0.8)',
-    },
-    title: {
-        fontSize: 14,
-    },
-    pos: {
-        marginBottom: 12,
-    },
-};
+function Stars(props){
+    const stars = Object.keys(props.list).map((star) =>
+        <li key={star}>
+            <Link to={{
+                pathname: "/star",
+                search: "?id="+props.list[star].id
+            }}>
+                {props.list[star].name}</Link>
+        </li>
+    );
+    return(
+        <Typography>
+            Actors
+            <ul>{stars}</ul>
+        </Typography>
+    );
+}
+
+function Genres(props){
+    const genres = Object.keys(props.list).map((genre) =>
+        <li key={genre}>
+            {props.list[genre]}
+        </li>
+    );
+    return (
+      <Typography>
+          Genres
+          <ul>{genres}</ul>
+      </Typography>
+    );
+}
 
 class Movies extends Component {
     render(){
         return (
-            <Fetch url="http://localhost:8080/top20">
+            <Fetch url="http://localhost:8080/cs122b/top20">
                 {({ fetching, failed, data }) => {
                     if (fetching) {
                         return <div>Loading data...</div>;
@@ -34,27 +50,16 @@ class Movies extends Component {
                     }
 
                     if (data) {
-                        // const listItems = Object.keys(data).map((movie) =>
-                        //     <tr key={movie}>
-                        //         <td>{data[movie].title}</td>
-                        //         <td>{data[movie].year}</td>
-                        //         <td>{data[movie].director}</td>
-                        //         <td>{data[movie].rating}</td>
-                        //         <td>{data[movie].stars}</td>
-                        //         <td>{data[movie].genres}</td>
-                        //     </tr>
-                        // );
-                        // return (
-                        //     <table>
-                        //         <tr><th>Movie Title</th><th>Year</th><th>Director</th><th>Rating</th><th>Stars</th></tr>
-                        //         {listItems}
-                        //         </table>
-                        // );
                         const films = Object.keys(data).map((movie) =>
                             <div key={movie}>
                                 <Card>
                                     <Typography gutterBottom variant="h5" component="h2">
-                                        Title: {data[movie].title}
+                                        <Link to={{
+                                            pathname: '/movie',
+                                            search: '?id='+data[movie].id
+                                        }}>
+                                            {data[movie].title}
+                                        </Link>
                                     </Typography>
                                     <Typography color="textSecondary" >
                                         Year: {data[movie].year}
@@ -65,8 +70,8 @@ class Movies extends Component {
                                     <Typography color="textSecondary" >
                                         Rating: {data[movie].rating}
                                     </Typography>
-                                    {
-                                    }
+                                    <Stars list={data[movie].stars}/>
+                                    <Genres list={data[movie].genres}/>
                                 </Card>
                             </div>
                         );
@@ -84,3 +89,4 @@ class Movies extends Component {
 }
 
 export default Movies;
+export { Stars };

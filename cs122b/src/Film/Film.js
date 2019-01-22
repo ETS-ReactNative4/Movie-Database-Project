@@ -4,30 +4,13 @@ import {Link} from 'react-router-dom';
 import queryString from 'query-string';
 import Card from '@material-ui/core/Card';
 import Typography from '@material-ui/core/Typography';
+import {Stars} from "../Movies/Movies";
 
-function StarMovies(props){
-    const movies = Object.keys(props.list).map((movie)=>
-        <li key={movie}>
-            <Link to={{
-                pathname: "/movie",
-                search: "?id="+props.list[movie].id
-            }}>
-            {props.list[movie].title}
-            </Link>
-        </li>
-    );
-    return(
-      <Typography>
-          Movies
-          <ul>{movies}</ul>
-      </Typography>
-    );
-}
-class Star extends Component {
+class Film extends Component {
     render(){
         const query = queryString.parse(this.props.location.search);
         return (
-            <Fetch url={"http://localhost:8080/cs122b/star?id="+query.id}>
+            <Fetch url={"http://localhost:8080/cs122b/movies?id="+query.id}>
                 {({ fetching, failed, data }) => {
                     if (fetching) {
                         return <div>Loading data...</div>;
@@ -36,7 +19,6 @@ class Star extends Component {
                     if (failed) {
                         return <div>The request did not succeed.</div>;
                     }
-
                     if (data) {
                         return (
                             <div>
@@ -45,9 +27,9 @@ class Star extends Component {
                                         {data.title}
                                     </Typography>
                                     <Typography color="textSecondary">
-                                        Birth Year: {data.birthYear}
+                                        Rating: {data.rating}
                                     </Typography>
-                                    <StarMovies list={data.movies}/>
+                                    <Stars list={data.stars}/>
                                 </Card>
                             </div>
                         );
@@ -59,4 +41,4 @@ class Star extends Component {
     }
 }
 
-export default Star;
+export default Film;
