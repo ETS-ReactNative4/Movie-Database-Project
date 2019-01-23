@@ -1,16 +1,18 @@
 import React, { Component } from 'react';
 import { Fetch } from 'react-request';
-import {Link} from 'react-router-dom';
 import queryString from 'query-string';
-import Card from '@material-ui/core/Card';
-import Typography from '@material-ui/core/Typography';
 import {Stars} from "../Movies/Movies";
-
+import {Card,Container, Header} from "semantic-ui-react";
 class Film extends Component {
     render(){
         const query = queryString.parse(this.props.location.search);
+        let CORSUrl = "http://cors-anywhere.herokuapp.com/"+window.location.hostname;
+        if (window.location.hostname==="localhost"){
+            CORSUrl = "http://localhost"
+        };
+        CORSUrl = CORSUrl+":8080/cs122b/movies?id="+query.id;
         return (
-            <Fetch url={"http://cors-anywhere.herokuapp.com/"+window.location.hostname+":8080/cs122b/movies?id="+query.id}>
+            <Fetch url={CORSUrl}>
                 {({ fetching, failed, data }) => {
                     if (fetching) {
                         return <div>Loading data...</div>;
@@ -21,17 +23,25 @@ class Film extends Component {
                     }
                     if (data) {
                         return (
-                            <div>
-                                <Card>
-                                    <Typography gutterBottom variant="h5" component="h2">
-                                        {data.title}
-                                    </Typography>
-                                    <Typography color="textSecondary">
-                                        Rating: {data.rating}
-                                    </Typography>
-                                    <Stars list={data.stars}/>
-                                </Card>
-                            </div>
+                            <Container>
+                                <Card.Group centered>
+                                    <Card>
+                                        <Card.Content>
+                                            <Card.Header>
+                                                <Header>
+                                                {data.title}
+                                                </Header>
+                                            </Card.Header>
+                                            <Card.Meta>
+                                                Rating: {data.rating}
+                                            </Card.Meta>
+                                            <Card.Description>
+                                                <Stars list={data.stars}/>
+                                            </Card.Description>
+                                        </Card.Content>
+                                    </Card>
+                                </Card.Group>
+                            </Container>
                         );
                     }
                     return null;

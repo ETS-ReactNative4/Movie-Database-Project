@@ -1,64 +1,61 @@
 import React, { Component } from 'react';
 import { Fetch } from 'react-request';
-import {Route, Link, BrowserRouter} from 'react-router-dom';
-import Card from '@material-ui/core/Card';
-import Typography from '@material-ui/core/Typography';
-import {withStyles} from "@material-ui/core/es/styles/index";
-
-const styles = {
-    card: {
-        minWidth: 275,
-        maxWidth: 500,
-    },
-    bullet: {
-        display: 'inline-block',
-        margin: '0 2px',
-        transform: 'scale(0.8)',
-    },
-    title: {
-        fontSize: 14,
-    },
-    pos: {
-        marginBottom: 12,
-    },
-};
+import {Link} from 'react-router-dom';
+import {Container, Card, List, Icon, Label} from 'semantic-ui-react';
 
 function Stars(props){
+    console.log(props.list);
     const stars = Object.keys(props.list).map((star) =>
-        <li key={star}>
+        <List.Item key={star}>
             <Link to={{
                 pathname: "/star",
                 search: "?id="+props.list[star].id
             }}>
-                {props.list[star].name}</Link>
-        </li>
+                <Label>
+                    <Icon name={"male"}/>{props.list[star].name}
+                </Label>
+                </Link>
+        </List.Item>
     );
     return(
-        <Typography>
-            Actors
-            <ul>{stars}</ul>
-        </Typography>
+        <List link>
+            <List.Item active>Actors</List.Item>
+            {stars}
+        </List>
     );
 }
 
 function Genres(props){
     const genres = Object.keys(props.list).map((genre) =>
-        <li key={genre}>
+        <List.Item key={genre}>
             {props.list[genre]}
-        </li>
+        </List.Item>
     );
     return (
-      <Typography>
-          Genres
-          <ul>{genres}</ul>
-      </Typography>
+      <List horizontal>
+          {genres}
+      </List>
     );
 }
 
 class Movies extends Component {
+    state = { activeIndex: 0 }
+
+    handleClick = (e, titleProps) => {
+        const {index} = titleProps
+        const {activeIndex} = this.state
+        const newIndex = activeIndex === index ? -1 : index
+        this.setState({activeIndex: newIndex})
+    }
+
     render(){
+        let CORSUrl = "http://cors-anywhere.herokuapp.com/"+window.location.hostname;
+        if (window.location.hostname==="localhost"){
+            CORSUrl = "http://localhost"
+        };
+        CORSUrl = CORSUrl+":8080/cs122b/top20";
         return (
-            <Fetch url={"http://cors-anywhere.herokuapp.com/"+window.location.hostname+":8080/cs122b/top20"}>
+            <Fetch url={CORSUrl}>
                 {({ fetching, failed, data }) => {
                     if (fetching) {
                         return <div>Loading data...</div>;
@@ -70,32 +67,34 @@ class Movies extends Component {
 
                     if (data) {
                         const films = Object.keys(data).map((movie) =>
-                            <div key={movie}>
-                                <Card>
-                                    <Typography gutterBottom variant="h5" component="h2">
-                                        <Link to={{
-                                            pathname: '/movie',
-                                            search: '?id='+data[movie].id
-                                        }}>
-                                            {data[movie].title}
-                                        </Link>
-                                    </Typography>
-                                    <Typography color="textSecondary" >
-                                        Year: {data[movie].year}
-                                    </Typography>
-                                    <Typography color="textSecondary" >
-                                        Director: {data[movie].director}
-                                    </Typography>
-                                    <Typography color="textSecondary" >
-                                        Rating: {data[movie].rating}
-                                    </Typography>
-                                    <Stars list={data[movie].stars}/>
-                                    <Genres list={data[movie].genres}/>
+                                <Card key={movie}>
+                                    <Card.Content>
+                                        <Card.Header>
+                                            <Link to={{
+                                                pathname: '/movie',
+                                                search: '?id='+data[movie].id
+                                            }}>
+                                                {data[movie].title}
+                                            </Link>
+                                        </Card.Header>
+                                        <Card.Meta>
+                                            Year: {data[movie].year}<br/>
+                                            Director: {data[movie].director}<br/>
+                                            Rating: {data[movie].rating}
+                                        </Card.Meta>
+                                        <Card.Description>
+                                            <Stars list={data[movie].stars}/>
+                                        </Card.Description>
+                                    </Card.Content>
+                                    <Card.Content extra>
+                                        <Genres list={data[movie].genres}/>
+                                    </Card.Content>
                                 </Card>
-                            </div>
                         );
                         return (
-                           <ul>{films}</ul>
+                            <Container>
+                                <Card.Group centered>{films}</Card.Group>
+                            </Container>
                         );
                     }
 
@@ -107,5 +106,5 @@ class Movies extends Component {
     }
 }
 
-export default withStyles(styles) (Movies);
+export default Movies;
 export { Stars };

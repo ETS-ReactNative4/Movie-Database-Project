@@ -1,42 +1,32 @@
 import React, { Component } from 'react';
-import { Fetch } from 'react-request';
 import './App.css';
 import {Route} from 'react-router-dom';
 import {BrowserRouter} from "react-router-dom";
-import Card from '@material-ui/core/Card';
-import Typography from '@material-ui/core/Typography';
+import {Menu, Header} from "semantic-ui-react";
 import Movies from "./Movies/Movies.js";
 import Star from "./Star/Star.js";
 import Film from "./Film/Film.js";
 
-const styles = {
-    card: {
-        minWidth: 300,
-    },
-    bullet: {
-        display: 'inline-block',
-        margin: '0 2px',
-        transform: 'scale(0.8)',
-    },
-    title: {
-        fontSize: 14,
-    },
-    pos: {
-        marginBottom: 12,
-    },
-};
-
 class App extends Component {
+    state = {};
+    handleItemClick = (e, {name}) => this.setState({activeItem: name});
     render(){
+        const { activeItem } = this.state;
         return (
-            <div>
-                <header>
-                    <nav>
-                        <ul>
-                            <li><a href="/">Top Twenty</a></li>
-                        </ul>
-                    </nav>
-                </header>
+            <div >
+                <link
+                    rel="stylesheet"
+                    href="//cdn.jsdelivr.net/npm/semantic-ui@2.4.1/dist/semantic.min.css"
+                />
+                <Menu inverted fluid widths={1}>
+                    <Menu.Item
+                        name='top-charts'
+                        active={activeItem==='topcharts'}
+                        header
+                    >
+                        <a href="/">Top Twenty</a>
+                    </Menu.Item>
+                </Menu>
                 <BrowserRouter>
                     <div>
                         <Route path="/" exact component={Movies}/>
