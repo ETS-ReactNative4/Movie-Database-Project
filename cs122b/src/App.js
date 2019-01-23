@@ -9,7 +9,6 @@ import Film from "./Film/Film.js";
 
 class App extends Component {
     state = {};
-    handleItemClick = (e, {name}) => this.setState({activeItem: name});
     render(){
         const { activeItem } = this.state;
         return (

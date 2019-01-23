@@ -40,19 +40,11 @@ function Genres(props){
 
 class Movies extends Component {
     state = { activeIndex: 0 }
-
-    handleClick = (e, titleProps) => {
-        const {index} = titleProps
-        const {activeIndex} = this.state
-        const newIndex = activeIndex === index ? -1 : index
-        this.setState({activeIndex: newIndex})
-    }
-
     render(){
         let CORSUrl = "http://cors-anywhere.herokuapp.com/"+window.location.hostname;
         if (window.location.hostname==="localhost"){
             CORSUrl = "http://localhost"
-        };
+        }
         CORSUrl = CORSUrl+":8080/cs122b/top20";
         return (
             <Fetch url={CORSUrl}>

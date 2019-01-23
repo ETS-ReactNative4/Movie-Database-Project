@@ -43,11 +43,9 @@ class Star extends Component {
                     }
 
                     if (data) {
+                        let born = "Born in "+ data.birthYear;
                         if(data.birthYear === 0){
-                            data.birthYear = " ";
-                        }
-                        else {
-                            data.birthYear = "Born in " + data.birthYear;
+                            born = " ";
                         }
                         return (
                             <Container>
@@ -60,7 +58,7 @@ class Star extends Component {
                                                 </Header>
                                             </Card.Header>
                                             <Card.Meta>
-                                                {data.birthYear}
+                                                {born}
                                             </Card.Meta>
                                             <Card.Description>
                                                 <StarMovies list={data.movies}/>
