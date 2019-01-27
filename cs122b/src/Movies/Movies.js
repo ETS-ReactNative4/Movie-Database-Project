@@ -41,13 +41,8 @@ function Genres(props){
 class Movies extends Component {
     state = { activeIndex: 0 }
     render(){
-        let CORSUrl = "http://cors-anywhere.herokuapp.com/"+window.location.hostname;
-        if (window.location.hostname==="localhost"){
-            CORSUrl = "http://localhost"
-        }
-        CORSUrl = CORSUrl+":8080/cs122b/top20";
         return (
-            <Fetch url={CORSUrl}>
+            <Fetch url={'http://'+window.location.hostname+':8080/cs122b/top20'}>
                 {({ fetching, failed, data }) => {
                     if (fetching) {
                         return <div>Loading data...</div>;

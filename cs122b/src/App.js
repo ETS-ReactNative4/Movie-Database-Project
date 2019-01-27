@@ -6,6 +6,7 @@ import {Menu, Header} from "semantic-ui-react";
 import Movies from "./Movies/Movies.js";
 import Star from "./Star/Star.js";
 import Film from "./Film/Film.js";
+import 'semantic-ui-css/semantic.min.css'
 
 class App extends Component {
     state = {};
@@ -13,10 +14,6 @@ class App extends Component {
         const { activeItem } = this.state;
         return (
             <div >
-                <link
-                    rel="stylesheet"
-                    href="//cdn.jsdelivr.net/npm/semantic-ui@2.4.1/dist/semantic.min.css"
-                />
                 <Menu inverted fluid widths={1}>
                     <Menu.Item
                         name='top-charts'

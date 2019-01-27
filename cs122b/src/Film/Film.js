@@ -6,13 +6,8 @@ import {Card,Container, Header} from "semantic-ui-react";
 class Film extends Component {
     render(){
         const query = queryString.parse(this.props.location.search);
-        let CORSUrl = "http://cors-anywhere.herokuapp.com/"+window.location.hostname;
-        if (window.location.hostname==="localhost"){
-            CORSUrl = "http://localhost"
-        };
-        CORSUrl = CORSUrl+":8080/cs122b/movies?id="+query.id;
         return (
-            <Fetch url={CORSUrl}>
+            <Fetch url={'http://'+window.location.hostname+':8080/cs122b/movies?id='+query.id}>
                 {({ fetching, failed, data }) => {
                     if (fetching) {
                         return <div>Loading data...</div>;

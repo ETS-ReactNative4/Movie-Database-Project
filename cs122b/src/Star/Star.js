@@ -25,14 +25,9 @@ function StarMovies(props){
 }
 class Star extends Component {
     render(){
-        let CORSUrl = "http://cors-anywhere.herokuapp.com/"+window.location.hostname;
-        if (window.location.hostname==="localhost"){
-            CORSUrl = "http://localhost"
-        };
         const query = queryString.parse(this.props.location.search);
-        CORSUrl = CORSUrl+":8080/cs122b/star?id="+query.id;
         return (
-            <Fetch url={CORSUrl}>
+            <Fetch url={'http://'+window.location.hostname+':8080/cs122b/star?id='+query.id}>
                 {({ fetching, failed, data }) => {
                     if (fetching) {
                         return <div>Loading data...</div>;
