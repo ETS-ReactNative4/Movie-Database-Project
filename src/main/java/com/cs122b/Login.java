@@ -32,16 +32,14 @@ public class Login extends HttpServlet {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
             Connection connection = Helper.connection();
             BufferedReader r = request.getReader();
+            StringBuilder sbuild = new StringBuilder();
             String param = null;
-            JSONObject credentials = null;
             while((param = r.readLine()) != null){
-                credentials = new JSONObject(param);
+                sbuild.append(param);
             }
-            assert credentials != null;
+            JSONObject credentials = new JSONObject(sbuild.toString());
             ret.println(credentials);
-            System.out.println(credentials.toString());
             connection.close();
-            ret.println(credentials);
             ret.flush();
         }
         catch (Exception e){

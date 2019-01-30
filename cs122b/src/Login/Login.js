@@ -18,10 +18,14 @@ class Login extends Component{
             username: this.state.username,
             password: this.state.password
         };
-        fetch('https://'+window.location.hostname+':8080/cs122b/login', {
+        // var request = new XMLHttpRequest();
+        // request.open('POST', 'http://'+window.location.hostname+':8080/cs122b/login', true);
+        // request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+        // request.send(JSON.stringify(creds));
+        fetch('http://'+window.location.hostname+':8080/cs122b/login', {
             method: 'POST',
             headers: {
-                'Accept':'application/json'
+                "Content-Type": "application/json"
             },
             body: JSON.stringify(creds)
         }).then(
