@@ -22,6 +22,19 @@ public class Helper {
         // create database connection
         return DriverManager.getConnection(loginUrl, loginUser, loginPasswd);
     }
+    static ResultSet getMovies(Connection con, String title, String year, String director, String star) throws SQLException{
+        Statement statement = con.createStatement();
+        String query = "SELECT movies.id, title, `year`, director, rating, starId, name " +
+                "FROM stars_in_movies " +
+                "INNER JOIN movies " +
+                "ON stars_in_movies.movieId = movies.id " +
+                "INNER JOIN stars " +
+                "ON stars_in_movies.starId = stars.id " +
+                "left join ratings " +
+                "ON movies.id = ratings.movieId " +
+                "limit 50";
+        return statement.executeQuery(query);
+    }
     static ResultSet getTwentyStars(Connection con) throws SQLException {
         Statement statement = con.createStatement();
         String query = "SELECT * from movies left join ratings on movies.id = ratings.movieId order by rating desc limit 20";

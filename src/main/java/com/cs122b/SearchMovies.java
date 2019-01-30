@@ -13,8 +13,8 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
 
-@WebServlet(name = "Movies", urlPatterns = "/top20")
-public class Movies extends HttpServlet {
+@WebServlet(name = "SearchMovies", urlPatterns="/search")
+public class SearchMovies extends HttpServlet {
     @Override
     protected void doOptions(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
@@ -29,19 +29,22 @@ public class Movies extends HttpServlet {
         response.setContentType("application/json");
         Helper.corsFix(response);
         PrintWriter ret = response.getWriter();
-        try{
+        try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
             Connection connection = Helper.connection();
-            ResultSet resultSet = Helper.getTwentyStars(connection);
-            JSONObject main = new JSONObject();
-            int counter = 0;
+            String title = request.getParameter("title");
+            String year = request.getParameter("year");
+            String director = request.getParameter("director");
+            String star = request.getParameter("star");
+            ResultSet resultSet = Helper.getMovies(connection,title, year, director, star);
+            JSONArray relatedMovies = new JSONArray();
             while(resultSet.next()){
                 String id = resultSet.getString("id");
                 JSONObject stuff = SingleMovie.singleMovieJSON(connection, id, resultSet);
-                main.put(Integer.toString(counter++), stuff);
+                relatedMovies.put(stuff);
             }
             connection.close();
-            ret.println(main);
+            ret.println(relatedMovies);
             ret.flush();
         }
         catch (Exception e){
