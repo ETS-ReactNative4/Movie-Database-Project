@@ -84,12 +84,10 @@ class Movies extends Component {
                             </Container>
                         );
                     }
-
                     return null;
                 }}
             </Fetch>
         );
-
     }
 }
 

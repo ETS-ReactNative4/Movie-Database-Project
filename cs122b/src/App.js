@@ -2,11 +2,12 @@ import React, { Component } from 'react';
 import './App.css';
 import {Route} from 'react-router-dom';
 import {BrowserRouter} from "react-router-dom";
-import {Menu, Header} from "semantic-ui-react";
+import {Menu} from "semantic-ui-react";
 import Movies from "./Movies/Movies.js";
 import Star from "./Star/Star.js";
 import Film from "./Film/Film.js";
-import 'semantic-ui-css/semantic.min.css'
+import Login from "./Login/Login.js";
+import 'semantic-ui-css/semantic.min.css';
 
 class App extends Component {
     state = {};
@@ -28,6 +29,7 @@ class App extends Component {
                         <Route path="/" exact component={Movies}/>
                         <Route path="/star" exact component={Star}/>
                         <Route path="/movie" exact component={Film}/>
+                        <Route path="/login" exact component={Login}/>
                     </div>
                 </BrowserRouter>
             </div>
