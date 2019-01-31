@@ -52,7 +52,7 @@ public class SingleMovie extends HttpServlet {
         Helper.corsFix(response);
         PrintWriter ret = response.getWriter();
         try{
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
             // create database connection
             Connection connection = Helper.connection();
             // declare statement

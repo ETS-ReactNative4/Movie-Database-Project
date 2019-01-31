@@ -30,7 +30,7 @@ public class SearchMovies extends HttpServlet {
         Helper.corsFix(response);
         PrintWriter ret = response.getWriter();
         try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
             Connection connection = Helper.connection();
             String title = request.getParameter("title");
             String year = request.getParameter("year");

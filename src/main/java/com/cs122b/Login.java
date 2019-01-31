@@ -7,10 +7,12 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.util.Date;
 
 @WebServlet(name = "Login", urlPatterns = "/login")
 public class Login extends HttpServlet {
@@ -29,7 +31,7 @@ public class Login extends HttpServlet {
 
     private void login(HttpServletRequest request, PrintWriter ret) {
         try{
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
             Connection connection = Helper.connection();
             BufferedReader r = request.getReader();
             StringBuilder sbuild = new StringBuilder();

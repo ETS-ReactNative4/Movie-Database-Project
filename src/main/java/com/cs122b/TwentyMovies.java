@@ -30,7 +30,7 @@ public class TwentyMovies extends HttpServlet {
         Helper.corsFix(response);
         PrintWriter ret = response.getWriter();
         try{
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
             Connection connection = Helper.connection();
             ResultSet resultSet = Helper.getTwentyStars(connection);
             JSONArray main = new JSONArray();
