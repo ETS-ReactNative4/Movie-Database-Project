@@ -24,16 +24,23 @@ public class Helper {
     }
     static ResultSet getMovies(Connection con, String title, String year, String director, String star) throws SQLException{
         Statement statement = con.createStatement();
-        String query = "SELECT movies.id, title, `year`, director, rating, starId, name " +
+        boolean at_least_one = false;
+        StringBuilder query = new StringBuilder("SELECT movies.id, title, `year`, director, rating, starId, name " +
                 "FROM stars_in_movies " +
                 "INNER JOIN movies " +
                 "ON stars_in_movies.movieId = movies.id " +
                 "INNER JOIN stars " +
                 "ON stars_in_movies.starId = stars.id " +
                 "left join ratings " +
-                "ON movies.id = ratings.movieId " +
-                "limit 50";
-        return statement.executeQuery(query);
+                "ON movies.id = ratings.movieId ");
+        if(title != null){
+            query.append("WHERE title LIKE '%"+title+"%' ");
+            at_least_one = true;
+        }
+        else if(year != null){
+
+        }
+        return statement.executeQuery(query.toString());
     }
     static ResultSet getTwentyStars(Connection con) throws SQLException {
         Statement statement = con.createStatement();

@@ -4,7 +4,6 @@ import {Link} from 'react-router-dom';
 import {Container, Card, List, Icon, Label} from 'semantic-ui-react';
 
 function Stars(props){
-    console.log(props.list);
     const stars = Object.keys(props.list).map((star) =>
         <List.Item key={star}>
             <Link to={{
