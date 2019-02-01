@@ -3,7 +3,10 @@ package com.cs122b;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.sql.*;
 
 public class Helper {
@@ -72,8 +75,14 @@ public class Helper {
         Statement statement = con.createStatement();
         return statement.executeQuery(movie_query);
     }
-    static void corsFix(HttpServletResponse resp) {
-        resp.setHeader("Access-Control-Allow-Origin", "*");
+    static void corsFix(HttpServletResponse resp, HttpServletRequest request) {
+        String domain = "http://";
+        try {
+            domain = domain+new URL(request.getRequestURL().toString()).getHost();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        resp.setHeader("Access-Control-Allow-Origin", domain+":3000");
         resp.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE, PATCH");
         resp.setHeader("Access-Control-Allow-Credentials", "true");
         resp.setHeader("Access-Control-Allow-Headers", "Content-Type");

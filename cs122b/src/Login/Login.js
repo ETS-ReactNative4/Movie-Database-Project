@@ -20,13 +20,14 @@ class Login extends Component{
         };
         // var request = new XMLHttpRequest();
         // request.open('POST', 'http://'+window.location.hostname+':8080/cs122b/login', true);
-        // request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+        // request.setRequestHeader('Content-Tjpe', 'application/json; charset=UTF-8');
         // request.send(JSON.stringify(creds));
         fetch('http://'+window.location.hostname+':8080/cs122b/login', {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json"
             },
+            credentials: 'include',
             body: JSON.stringify(creds)
         }).then(
             (res) => res.json()

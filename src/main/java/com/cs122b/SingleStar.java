@@ -18,7 +18,7 @@ public class SingleStar extends HttpServlet {
     @Override
     protected void doOptions(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        Helper.corsFix(resp);
+        Helper.corsFix(resp,req);
         resp.setStatus(HttpServletResponse.SC_OK);
     }
     public JSONObject singleStarJSON(Connection connection, String id, ResultSet resultSet) throws SQLException {
@@ -49,7 +49,7 @@ public class SingleStar extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("application/json");
-        Helper.corsFix(response);
+        Helper.corsFix(response,request);
         PrintWriter ret = response.getWriter();
         try{
             Class.forName("com.mysql.cj.jdbc.Driver").newInstance();

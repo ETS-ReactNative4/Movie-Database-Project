@@ -4,10 +4,7 @@ import org.json.JSONObject;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -19,13 +16,17 @@ public class Login extends HttpServlet {
     @Override
     protected void doOptions(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        Helper.corsFix(resp);
+        Helper.corsFix(resp,req);
         resp.setStatus(HttpServletResponse.SC_OK);
     }
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("application/json");
-        Helper.corsFix(response);
+        Helper.corsFix(response, request);
         PrintWriter ret = response.getWriter();
+        HttpSession session = request.getSession();
+        System.out.println(session.getId());
+        HttpSession sesh = request.getSession(true);
+        System.out.println(sesh.getId());
         login(request, ret);
     }
 

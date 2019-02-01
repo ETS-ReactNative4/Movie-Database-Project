@@ -8,6 +8,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -18,7 +19,7 @@ public class TwentyMovies extends HttpServlet {
     @Override
     protected void doOptions(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        Helper.corsFix(resp);
+        Helper.corsFix(resp,req);
         resp.setStatus(HttpServletResponse.SC_OK);
     }
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -27,7 +28,9 @@ public class TwentyMovies extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("application/json");
-        Helper.corsFix(response);
+        Helper.corsFix(response,request);
+        HttpSession session = request.getSession(true);
+        System.out.println(session.getId());
         PrintWriter ret = response.getWriter();
         try{
             Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
