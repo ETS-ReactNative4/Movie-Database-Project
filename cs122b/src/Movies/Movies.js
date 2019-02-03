@@ -47,7 +47,6 @@ class Movies extends Component {
         valid: false,
         mounted: false
     };
-
     componentDidMount(){
         fetch('http://'+window.location.hostname+':8080/cs122b/login', {
             method: 'GET',
@@ -69,6 +68,7 @@ class Movies extends Component {
     componentWillUnmount(){
         this.setState({mounted: false});
     }
+
     render(){
         if(this.state.mounted && this.state.valid){
             return (

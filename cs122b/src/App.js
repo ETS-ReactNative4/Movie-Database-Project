@@ -8,6 +8,7 @@ import Star from "./Star/Star.js";
 import Film from "./Film/Film.js";
 import Login from "./Login/Login.js";
 import 'semantic-ui-css/semantic.min.css';
+import Search from "./Search/Search";
 
 class App extends Component {
     state = {};
@@ -30,6 +31,7 @@ class App extends Component {
                         <Route path="/star" exact component={Star}/>
                         <Route path="/movie" exact component={Film}/>
                         <Route path="/login" exact component={Login}/>
+                        <Route path="/search" exact component={Search}/>
                     </div>
                 </BrowserRouter>
             </div>
