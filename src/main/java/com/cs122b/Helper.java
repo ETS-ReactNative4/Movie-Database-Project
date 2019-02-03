@@ -33,7 +33,7 @@ public class Helper {
         year = (year != null) ? year : "";
         director = (director != null) ? director : "";
         star = (star != null) ? star : "";
-        offset = (offset != null) ? offset : "10";
+        offset = (offset != null) ? offset : "0";
 
 
         String query = "Select distinct id, title, `year`, director, rating FROM "+
@@ -51,7 +51,7 @@ public class Helper {
         ResultSet res = statement.executeQuery(totalCount);
         res.next();
         numRecords.num = res.getInt("count");
-        query = query + " LIMIT "+offset+", 10";
+        query = query + " LIMIT "+offset+", 12";
         System.out.println(query);
         return statement.executeQuery(query);
     }
@@ -89,7 +89,6 @@ public class Helper {
         Statement statement = con.createStatement();
         String query = "SELECT COUNT(*) as valid from customers where email='"+
                 data.getString("username")+"' and password='"+data.getString("password")+"'";
-        System.out.println(query);
         ResultSet resultSet = statement.executeQuery(query);
         resultSet.next();
         return (resultSet.getInt("valid") == 1);
