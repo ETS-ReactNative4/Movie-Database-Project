@@ -41,7 +41,8 @@ public class SearchMovies extends HttpServlet {
             String director = request.getParameter("director");
             String star = request.getParameter("name");
             String offset = request.getParameter("offset");
-            ResultSet resultSet = Helper.getMovies(connection,title, year, director, star, offset, numRecords);
+            String limit = request.getParameter("limit");
+            ResultSet resultSet = Helper.getMovies(connection,title, year, director, star, offset, numRecords, limit);
             JSONObject encapsulator = new JSONObject();
             encapsulator.put("numRecords", numRecords.num);
             JSONArray relatedMovies = new JSONArray();

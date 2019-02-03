@@ -26,7 +26,8 @@ public class Helper {
         // create database connection
         return DriverManager.getConnection(loginUrl, loginUser, loginPasswd);
     }
-    static ResultSet getMovies(Connection con, String title, String year, String director, String star, String offset, SearchMovies.NumRecords numRecords) throws SQLException{
+    static ResultSet getMovies(Connection con, String title, String year, String director, String star,
+                               String offset, SearchMovies.NumRecords numRecords, String limit) throws SQLException{
         Statement statement = con.createStatement();
         // Turn all null strings into ""
         title = (title != null) ? title : "";
@@ -34,6 +35,7 @@ public class Helper {
         director = (director != null) ? director : "";
         star = (star != null) ? star : "";
         offset = (offset != null) ? offset : "0";
+        limit = (limit != null) ? limit : "10";
 
 
         String query = "Select distinct id, title, `year`, director, rating FROM "+
@@ -51,7 +53,7 @@ public class Helper {
         ResultSet res = statement.executeQuery(totalCount);
         res.next();
         numRecords.num = res.getInt("count");
-        query = query + " LIMIT "+offset+", 12";
+        query = query + " LIMIT "+offset+", "+limit;
         System.out.println(query);
         return statement.executeQuery(query);
     }
