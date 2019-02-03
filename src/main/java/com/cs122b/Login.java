@@ -23,14 +23,10 @@ public class Login extends HttpServlet {
         response.setContentType("application/json");
         Helper.corsFix(response, request);
         PrintWriter ret = response.getWriter();
-        HttpSession session = request.getSession();
-        System.out.println(session.getId());
-        HttpSession sesh = request.getSession(true);
-        System.out.println(sesh.getId());
-        login(request, ret);
+        login(request, ret, response);
     }
 
-    private void login(HttpServletRequest request, PrintWriter ret) {
+    private void login(HttpServletRequest request, PrintWriter ret, HttpServletResponse response) {
         try{
             Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
             Connection connection = Helper.connection();
@@ -41,8 +37,16 @@ public class Login extends HttpServlet {
                 sbuild.append(param);
             }
             JSONObject credentials = new JSONObject(sbuild.toString());
-            ret.println(credentials);
+            if(Helper.isValidUser(connection, credentials)){
+                request.getSession();
+                System.out.println("Good");
+            }
+            else{
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                System.out.println("Bad");
+            }
             connection.close();
+            ret.println();
             ret.flush();
         }
         catch (Exception e){
@@ -54,5 +58,12 @@ public class Login extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Helper.corsFix(response, request);
+        PrintWriter ret = response.getWriter();
+        if(!Helper.isLoggedIn(request,response)){
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        }
+        ret.println();
+        ret.flush();
     }
 }

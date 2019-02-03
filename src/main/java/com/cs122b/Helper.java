@@ -3,6 +3,7 @@ package com.cs122b;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.MalformedURLException;
@@ -25,25 +26,34 @@ public class Helper {
         // create database connection
         return DriverManager.getConnection(loginUrl, loginUser, loginPasswd);
     }
-    static ResultSet getMovies(Connection con, String title, String year, String director, String star) throws SQLException{
+    static ResultSet getMovies(Connection con, String title, String year, String director, String star, String offset, SearchMovies.NumRecords numRecords) throws SQLException{
         Statement statement = con.createStatement();
-        boolean at_least_one = false;
-        StringBuilder query = new StringBuilder("SELECT movies.id, title, `year`, director, rating, starId, name " +
+        // Turn all null strings into ""
+        title = (title != null) ? title : "";
+        year = (year != null) ? year : "";
+        director = (director != null) ? director : "";
+        star = (star != null) ? star : "";
+        offset = (offset != null) ? offset : "10";
+
+
+        String query = "Select distinct id, title, `year`, director, rating FROM "+
+                "(SELECT movies.id, title, `year`, director, rating, starId, `name` " +
                 "FROM stars_in_movies " +
                 "INNER JOIN movies " +
                 "ON stars_in_movies.movieId = movies.id " +
                 "INNER JOIN stars " +
                 "ON stars_in_movies.starId = stars.id " +
                 "left join ratings " +
-                "ON movies.id = ratings.movieId ");
-        if(title != null){
-            query.append("WHERE title LIKE '%"+title+"%' ");
-            at_least_one = true;
-        }
-        else if(year != null){
-
-        }
-        return statement.executeQuery(query.toString());
+                "ON movies.id = ratings.movieId WHERE title LIKE '%"+title+
+                "%' AND `year` LIKE '%"+year+"%' AND director LIKE '%"+director+
+                "%' AND `name` LIKE '%"+star+"%') as records";
+        String totalCount = "Select count(*) as count from ("+query+") as distinctrecords";
+        ResultSet res = statement.executeQuery(totalCount);
+        res.next();
+        numRecords.num = res.getInt("count");
+        query = query + " LIMIT "+offset+", 10";
+        System.out.println(query);
+        return statement.executeQuery(query);
     }
     static ResultSet getTwentyStars(Connection con) throws SQLException {
         Statement statement = con.createStatement();
@@ -75,6 +85,15 @@ public class Helper {
         Statement statement = con.createStatement();
         return statement.executeQuery(movie_query);
     }
+    static boolean isValidUser(Connection con, JSONObject data) throws SQLException{
+        Statement statement = con.createStatement();
+        String query = "SELECT COUNT(*) as valid from customers where email='"+
+                data.getString("username")+"' and password='"+data.getString("password")+"'";
+        System.out.println(query);
+        ResultSet resultSet = statement.executeQuery(query);
+        resultSet.next();
+        return (resultSet.getInt("valid") == 1);
+    }
     static void corsFix(HttpServletResponse resp, HttpServletRequest request) {
         String domain = "http://";
         try {
@@ -86,5 +105,21 @@ public class Helper {
         resp.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE, PATCH");
         resp.setHeader("Access-Control-Allow-Credentials", "true");
         resp.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    }
+    static boolean isLoggedIn(HttpServletRequest request,HttpServletResponse response){
+        Cookie[] cookies = request.getCookies();
+        if(request.isRequestedSessionIdFromCookie() && !request.isRequestedSessionIdValid()){
+            for (Cookie c :
+                    cookies) {
+                c.setMaxAge(0);
+                response.addCookie(c);
+                System.out.println(c.getName());
+            }
+            return false;
+        }
+        else if(!request.isRequestedSessionIdValid()){
+            return false;
+        }
+        return true;
     }
 }
