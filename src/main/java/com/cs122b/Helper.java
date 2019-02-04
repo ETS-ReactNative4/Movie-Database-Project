@@ -26,6 +26,34 @@ public class Helper {
         // create database connection
         return DriverManager.getConnection(loginUrl, loginUser, loginPasswd);
     }
+    static ResultSet getBrowseMovies(Connection con, String genre, String letter, String offset,
+                                     String limit, String sort, String order, SearchMovies.NumRecords numRecords) throws SQLException {
+        Statement statement = con.createStatement();
+        sort = (sort != null) ? sort : "rating";
+        order = (order != null) ? order : "DESC";
+        offset = (offset != null) ? offset : "0";
+        limit = (limit != null) ? limit : "10";
+        letter = (letter != null) ? letter : "A";
+        String query = null;
+        if(!genre.equals("")){
+            query = "SELECT movies.id, movies.title, `year`, director, genres.name, rating FROM genres_in_movies\n" +
+                    "\tINNER JOIN movies ON genres_in_movies.movieId=movies.id\n" +
+                    "    INNER JOIN genres on genres_in_movies.genreId=genres.id\n" +
+                    "    INNER JOIN ratings ON genres_in_movies.movieId=ratings.movieId" +
+                    "   WHERE genres.name LIKE '"+genre+"'";
+        }
+        else{
+            query = "Select id, title, `year`, director, rating from movies " +
+                    "INNER JOIN ratings on movies.id=ratings.movieId where title LIKE '"+letter+"%'";
+        }
+        String totalCount = "Select count(*) as count from ("+query+") as distinctrecords";
+        ResultSet res = statement.executeQuery(totalCount);
+        res.next();
+        numRecords.num = res.getInt("count");
+        query = query + " ORDER BY "+sort+" "+order+" LIMIT "+offset+", "+limit;
+        System.out.println(query);
+        return statement.executeQuery(query);
+    }
     static ResultSet getMovies(Connection con, String title, String year, String director, String star,
                                String offset, SearchMovies.NumRecords numRecords, String limit) throws SQLException{
         Statement statement = con.createStatement();
