@@ -9,7 +9,7 @@ import Login from "./Login/Login.js";
 import 'semantic-ui-css/semantic.min.css';
 import Search from "./Search/Search";
 import Browse from "./Browse/Browse";
-import Cart from "./Cart/Cart";
+import Cart, {isEmpty} from "./Cart/Cart";
 
 class App extends Component {
     state = {cart: {}};
@@ -24,11 +24,18 @@ class App extends Component {
         }
         this.setState({cart: crt}, function(){
             console.log(this.state.cart);
+            localStorage.setItem("cart", JSON.stringify(this.state.cart));
         });
     };
     handleUpdateCart = (carty) => {
         this.setState({cart: carty});
     };
+    componentDidMount(){
+        let crt = JSON.parse(localStorage.getItem("cart"));
+        if(!isEmpty(crt)){
+            this.setState({cart: crt});
+        }
+    }
     render() {
         return (
             <div>
