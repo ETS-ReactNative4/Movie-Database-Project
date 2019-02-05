@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Fetch } from 'react-request';
 import queryString from 'query-string';
 import {Stars,Genres} from "../Movies/Movies";
-import {Card, Container} from "semantic-ui-react";
+import {Button, Card, Container, Icon} from "semantic-ui-react";
 import {Redirect} from "react-router";
 import MyLoader from "../MyLoader/MyLoader";
 import {Link} from "react-router-dom";
@@ -11,13 +11,13 @@ function FilmCard(props){
     return(
       <Card key={props.movie}>
           <Card.Content>
-              <Card.Header>
-                  <Link to={{
-                      pathname: '/movie',
-                      search: '?id='+props.movieid
-                  }}>
+              <Card.Header
+              as={Link}
+              to={{
+                  pathname: '/movie',
+                  search: '?id='+props.movieid
+              }}>
                       {props.title}
-                  </Link>
               </Card.Header>
               <Card.Meta>
                   Year: {props.year}<br/>
@@ -29,8 +29,12 @@ function FilmCard(props){
               </Card.Description>
           </Card.Content>
           <Card.Content extra>
-              <Genres list={props.genres} func={props.handlr}/>
+              <Genres list={props.genres}/>
           </Card.Content>
+          <Button color={'teal'} animated={"fade"} onClick={()=>props.handleAddToCart(props.movieid)}>
+              <Button.Content hidden><Icon name={"plus"}/></Button.Content>
+              <Button.Content visible>Add to Cart</Button.Content>
+          </Button>
       </Card>
     );
 }
@@ -79,7 +83,7 @@ class Film extends Component {
                                     <Card.Group centered>
                                         <FilmCard movieid={data.id} title={data.title}
                                         year={data.year} director={data.director} rating={data.rating}
-                                        stars = {data.stars} genres={data.genres}/>
+                                        stars = {data.stars} genres={data.genres} handleAddToCart={this.props.handleAddToCart}/>
                                     </Card.Group>
                                 </Container>
                             );

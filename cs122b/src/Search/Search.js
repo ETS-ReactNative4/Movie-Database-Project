@@ -120,7 +120,7 @@ class Search extends MovieList {
                         }
                     </Segment>
                     {
-                        super.render()
+                        super.render(this.props)
                     }
                 </div>
             );

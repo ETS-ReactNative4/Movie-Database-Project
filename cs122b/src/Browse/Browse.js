@@ -185,7 +185,7 @@ class Browse extends MovieList {
                         }
                     </Segment>
                     {
-                        super.render()
+                        super.render(this.props)
                     }
                 </div>
             );

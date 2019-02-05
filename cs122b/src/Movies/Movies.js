@@ -91,7 +91,7 @@ class Movies extends Component {
                             const films = Object.keys(data).map((movie) =>
                                 <FilmCard key={movie} movieid={data[movie].id} title={data[movie].title}
                                           year={data[movie].year} director={data[movie].director} rating={data[movie].rating}
-                                          stars = {data[movie].stars} genres={data[movie].genres}/>
+                                          stars = {data[movie].stars} genres={data[movie].genres} handleAddToCart={this.props.handleAddToCart}/>
                             );
                             return (
                                 <Container>

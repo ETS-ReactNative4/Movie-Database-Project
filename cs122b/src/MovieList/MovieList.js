@@ -14,7 +14,7 @@ function SearchResults(props) {
   const films = Object.keys(props.data).map((movie) =>
     <FilmCard key={movie} movieid={props.data[movie].id} title={props.data[movie].title}
               year={props.data[movie].year} director={props.data[movie].director} rating={props.data[movie].rating}
-              stars={props.data[movie].stars} genres={props.data[movie].genres}/>
+              stars={props.data[movie].stars} genres={props.data[movie].genres} handleAddToCart={props.handleAddToCart}/>
   );
   return (
     <Container>
@@ -69,7 +69,7 @@ class MovieList extends Component {
         );
       case "received":
         return (
-          <SearchResults data={this.state.data}/>
+          <SearchResults data={this.state.data} handleAddToCart={this.props.handleAddToCart}/>
         );
       default:
         return (
