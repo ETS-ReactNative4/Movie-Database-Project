@@ -30,7 +30,10 @@ function Stars(props){
 
 function Genres(props){
     const genres = Object.keys(props.list).map((genre) =>
-        <List.Item key={genre}>
+        <List.Item key={genre}
+        as={Link} to={{pathname: '/browse',
+        state: {genre: props.list[genre], reload: "yes"}}}
+        >
             {props.list[genre]}
         </List.Item>
     );

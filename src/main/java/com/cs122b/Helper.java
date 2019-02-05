@@ -55,7 +55,7 @@ public class Helper {
         return statement.executeQuery(query);
     }
     static ResultSet getMovies(Connection con, String title, String year, String director, String star,
-                               String offset, SearchMovies.NumRecords numRecords, String limit) throws SQLException{
+                               String offset, SearchMovies.NumRecords numRecords, String limit, String sort, String order) throws SQLException{
         Statement statement = con.createStatement();
         // Turn all null strings into ""
         title = (title != null) ? title : "";
@@ -64,6 +64,8 @@ public class Helper {
         star = (star != null) ? star : "";
         offset = (offset != null) ? offset : "0";
         limit = (limit != null) ? limit : "10";
+        sort = (sort != null) ? sort : "rating";
+        order = (order != null) ? order : "DESC";
 
 
         String query = "Select distinct id, title, `year`, director, rating FROM "+
@@ -81,7 +83,7 @@ public class Helper {
         ResultSet res = statement.executeQuery(totalCount);
         res.next();
         numRecords.num = res.getInt("count");
-        query = query + " LIMIT "+offset+", "+limit;
+        query = query + " ORDER BY "+sort+" "+order+" LIMIT "+offset+", "+limit;
         System.out.println(query);
         return statement.executeQuery(query);
     }

@@ -29,7 +29,7 @@ function FilmCard(props){
               </Card.Description>
           </Card.Content>
           <Card.Content extra>
-              <Genres list={props.genres}/>
+              <Genres list={props.genres} func={props.handlr}/>
           </Card.Content>
       </Card>
     );
