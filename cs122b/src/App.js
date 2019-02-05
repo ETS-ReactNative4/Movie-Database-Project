@@ -15,10 +15,19 @@ class App extends Component {
     state = {cart: {}};
     handleAddToCart = (item) => {
         let crt = {...this.state.cart};
-        crt[item] = 1;
+        if(item.id in crt){
+            crt[item.id]["quantity"] += 1
+        }
+        else{
+            crt[item.id] = item;
+            crt[item.id]["quantity"] = 1;
+        }
         this.setState({cart: crt}, function(){
             console.log(this.state.cart);
         });
+    };
+    handleUpdateCart = (carty) => {
+        this.setState({cart: carty});
     };
     render() {
         return (
@@ -68,7 +77,7 @@ class App extends Component {
                         <Route path="/login" exact component={Login}/>
                         <Route path="/search" exact render={(props) => <Search {...props} handleAddToCart={this.handleAddToCart}/>}/>
                         <Route path="/browse" exact render={(props) => <Browse {...props} handleAddToCart={this.handleAddToCart}/>}/>
-                        <Route path="/cart" exact component={Cart}/>
+                        <Route path="/cart" exact render={(props) => <Cart {...props} handleUpdateCart={this.handleUpdateCart} handleAddToCart={this.handleAddToCart} cart={this.state.cart}/>}/>
                     </div>
                 </BrowserRouter>
             </div>

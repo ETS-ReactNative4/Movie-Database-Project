@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Redirect} from "react-router";
 import MyLoader from "../MyLoader/MyLoader";
-import {Container, Header, Icon, Item} from "semantic-ui-react";
+import {Container, Header, Icon, Item, Segment} from "semantic-ui-react";
 
 
 class Cart extends Component {
@@ -12,6 +12,9 @@ class Cart extends Component {
     };
 
     componentDidMount() {
+        this.setState({carty: this.props.cart}, function(){
+            console.log(this.state.carty);
+        });
         fetch('http://' + window.location.hostname + ':8080/cs122b/login', {
             method: 'GET',
             credentials: 'include'
@@ -38,13 +41,24 @@ class Cart extends Component {
             try{
                 const items = Object.keys(this.state.carty).map((item) =>
                     <Item key={item}>
-                        <Item.Header>{this.state.carty[item]}</Item.Header>
+                        <Item.Content>
+                            <Item.Header>{this.state.carty[item].title}</Item.Header>
+                            <Item.Meta>Details</Item.Meta>
+                            <Item.Description>
+                                Year: {this.state.carty[item].year}<br/>
+                                Director: {this.state.carty[item].director}<br/>
+                                Rating: {this.state.carty[item].rating}<br/>
+                            </Item.Description>
+                            <Item.Extra>Qty: {this.state.carty[item].quantity}</Item.Extra>
+                        </Item.Content>
                     </Item>
                 );
                 return (
-                    <Item.Group>
-                        {items}
-                    </Item.Group>
+                    <Segment>
+                        <Item.Group>
+                            {items}
+                        </Item.Group>
+                    </Segment>
                 );
             }
             catch{

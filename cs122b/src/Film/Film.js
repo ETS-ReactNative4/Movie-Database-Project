@@ -31,7 +31,8 @@ function FilmCard(props){
           <Card.Content extra>
               <Genres list={props.genres}/>
           </Card.Content>
-          <Button color={'teal'} animated={"fade"} onClick={()=>props.handleAddToCart(props.movieid)}>
+          <Button color={'teal'} animated={"fade"} onClick={()=>props.handleAddToCart({id: props.movieid,
+          title: props.title, director: props.director, year: props.year, rating: props.rating})}>
               <Button.Content hidden><Icon name={"plus"}/></Button.Content>
               <Button.Content visible>Add to Cart</Button.Content>
           </Button>
