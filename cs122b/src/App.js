@@ -68,7 +68,7 @@ class App extends Component {
                                 name='cart'
                                 header
                             >
-                                Cart
+                                Checkout
                             </Menu.Item>
                         </Menu>
                         <Route path="/" exact render={(props) => <Movies {...props} handleAddToCart={this.handleAddToCart}/>}/>
