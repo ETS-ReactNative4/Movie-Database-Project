@@ -1,0 +1,7 @@
+I used the LIKE predicate entirely within my Helper.java class, where I have all my sql functions.
+
+In there, I use '%searchquery%' for all title, year, director, and star searches. This I found to give the best results.
+
+I also used LIKE with strict matching 'searchquery' in genres, so as to get the explicit genre I was searching for
+
+Lastly, I used LIKE with 'letter%' to match all movies starting with a particular letter

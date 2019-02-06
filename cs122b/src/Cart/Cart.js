@@ -23,6 +23,7 @@ function EmptyCart() {
 function OrderNums(props){
     const list = Object.keys(props.list).map((key) =>
         <Segment key={key}>
+            <b>OrderNumber: </b>
             {
                 props.list[key]
             }
@@ -285,7 +286,7 @@ class Cart extends Component {
                                                         name={'expiration'}
                                                         onChange={this.handleInputChange}
                                                         error={this.state.error['expiration']}
-                                                        placeholder={'Expiration Date'}
+                                                        placeholder={'Expiration (YYYY-MM-DD)'}
                                             />
                                         </Form.Group>
                                     </Form>
@@ -300,7 +301,7 @@ class Cart extends Component {
                                             />
                                         }
                                     >
-                                        <Header icon={'checkmark'} content={'Confirmed'}/>
+                                        <Header icon={'checkmark'} content={'Order Confirmed'}/>
                                         <Modal.Content>
                                             {
                                                 this.state.transaction ?
