@@ -12,7 +12,11 @@ import Browse from "./Browse/Browse";
 import Cart, {isEmpty} from "./Cart/Cart";
 
 class App extends Component {
-    state = {cart: {}};
+    state = {cart: {},customer: {}};
+    constructor(){
+        super();
+        this.getCust = this.getCust.bind(this);
+    }
     handleAddToCart = (item) => {
         let crt = {...this.state.cart};
         if(item.id in crt){
@@ -23,17 +27,26 @@ class App extends Component {
             crt[item.id]["quantity"] = 1;
         }
         this.setState({cart: crt}, function(){
-            console.log(this.state.cart);
-            localStorage.setItem("cart", JSON.stringify(this.state.cart));
+            sessionStorage.setItem("cart", JSON.stringify(this.state.cart));
         });
     };
     handleUpdateCart = (carty) => {
         this.setState({cart: carty});
     };
+    getCust(cust){
+        this.setState({custId: cust});
+        sessionStorage.setItem("customer", JSON.stringify(cust));
+    }
     componentDidMount(){
-        let crt = JSON.parse(localStorage.getItem("cart"));
+        let crt = JSON.parse(sessionStorage.getItem("cart"));
         if(!isEmpty(crt)){
             this.setState({cart: crt});
+        }
+        let cust = JSON.parse(sessionStorage.getItem("customer"));
+        if(!isEmpty(cust)){
+            this.setState({customer: cust}, function(){
+                console.log(this.state);
+            });
         }
     }
     render() {
@@ -81,7 +94,7 @@ class App extends Component {
                         <Route path="/" exact render={(props) => <Movies {...props} handleAddToCart={this.handleAddToCart}/>}/>
                         <Route path="/star" exact render={(props) => <Star {...props} handleAddToCart={this.handleAddToCart}/>}/>
                         <Route path="/movie" exact render={(props) => <Film {...props} handleAddToCart={this.handleAddToCart}/>}/>
-                        <Route path="/login" exact component={Login}/>
+                        <Route path="/login" exact render={(props) => <Login {...props} getCust={this.getCust}/>}/>
                         <Route path="/search" exact render={(props) => <Search {...props} handleAddToCart={this.handleAddToCart}/>}/>
                         <Route path="/browse" exact render={(props) => <Browse {...props} handleAddToCart={this.handleAddToCart}/>}/>
                         <Route path="/cart" exact render={(props) => <Cart {...props} handleUpdateCart={this.handleUpdateCart} handleAddToCart={this.handleAddToCart} cart={this.state.cart}/>}/>

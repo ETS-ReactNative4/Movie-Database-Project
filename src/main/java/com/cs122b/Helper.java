@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.*;
+import java.util.Iterator;
 
 public class Helper {
     static String loginUser = "username";
@@ -53,6 +54,29 @@ public class Helper {
         query = query + " ORDER BY "+sort+" "+order+" LIMIT "+offset+", "+limit;
         System.out.println(query);
         return statement.executeQuery(query);
+    }
+    static JSONObject getSalesRecords(Connection con, JSONObject sale) throws SQLException {
+        JSONObject records = new JSONObject();
+        Iterator<String> keys = records.keys();
+        Statement statement = con.createStatement();
+        String query = null;
+        while(keys.hasNext()){
+            String key = keys.next();
+            JSONArray stuff = new JSONArray();
+            if(records.get(key) instanceof  JSONObject){
+                for (int i = 0; i < Integer.parseInt(((JSONObject) records.get(key)).getString("quantity")); i++){
+                    query = "INSERT INTO sales(customerId, movieId, saleDate) VALUES ('"+records.getString("customerId")+"', '"+
+                            key+"', DATE(NOW()))";
+                    statement.executeQuery(query);
+                    query = "SELECT last_insert_id() as id";
+                    ResultSet resultSet = statement.executeQuery(query);
+                    resultSet.next();
+                    stuff.put(resultSet.getInt("id"));
+                }
+                records.put(key, stuff);
+            }
+        }
+        return records;
     }
     static ResultSet getMovies(Connection con, String title, String year, String director, String star,
                                String offset, SearchMovies.NumRecords numRecords, String limit, String sort, String order) throws SQLException{
@@ -117,13 +141,21 @@ public class Helper {
         Statement statement = con.createStatement();
         return statement.executeQuery(movie_query);
     }
-    static boolean isValidUser(Connection con, JSONObject data) throws SQLException{
+    static JSONObject isValidUser(Connection con, JSONObject data) throws SQLException{
+        JSONObject customer = null;
         Statement statement = con.createStatement();
-        String query = "SELECT COUNT(*) as valid from customers where email='"+
+        String query = "SELECT id, firstName, lastName, ccId, email from customers where email='"+
                 data.getString("username")+"' and password='"+data.getString("password")+"'";
         ResultSet resultSet = statement.executeQuery(query);
-        resultSet.next();
-        return (resultSet.getInt("valid") == 1);
+        while(resultSet.next()){
+            customer = new JSONObject();
+            customer.put("id", resultSet.getString("id"));
+            customer.put("firstName", resultSet.getString("firstName"));
+            customer.put("lastName", resultSet.getString("lastName"));
+            customer.put("ccId", resultSet.getString("ccId"));
+            customer.put("email", resultSet.getString("email"));
+        }
+        return customer;
     }
     static void corsFix(HttpServletResponse resp, HttpServletRequest request) {
         String domain = "http://";

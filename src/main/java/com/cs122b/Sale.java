@@ -4,15 +4,16 @@ import org.json.JSONObject;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
-import java.util.Date;
 
-@WebServlet(name = "Login", urlPatterns = "/login")
-public class Login extends HttpServlet {
+@WebServlet(name = "Sale", urlPatterns = {"/sale"})
+public class Sale extends HttpServlet {
     @Override
     protected void doOptions(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
@@ -23,48 +24,33 @@ public class Login extends HttpServlet {
         response.setContentType("application/json");
         Helper.corsFix(response, request);
         PrintWriter ret = response.getWriter();
-        login(request, ret, response);
-    }
-
-    private void login(HttpServletRequest request, PrintWriter ret, HttpServletResponse response) {
-        try{
+        try {
             Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
             Connection connection = Helper.connection();
             BufferedReader r = request.getReader();
             StringBuilder sbuild = new StringBuilder();
             String param = null;
-            while((param = r.readLine()) != null){
+            while ((param = r.readLine()) != null) {
                 sbuild.append(param);
             }
-            JSONObject credentials = new JSONObject(sbuild.toString());
-            credentials = Helper.isValidUser(connection, credentials);
-            if(credentials != null){
-                request.getSession();
-                System.out.println("Good");
+            JSONObject sale = new JSONObject(sbuild.toString());
+            sale = Helper.getSalesRecords(connection, sale);
+            if(!sale.isEmpty()){
+                ret.println(sale);
             }
             else{
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                System.out.println("Bad");
+                ret.println();
             }
             connection.close();
-            ret.println(credentials);
             ret.flush();
-        }
-        catch (Exception e){
+        }catch(Exception e){
             JSONObject error = new JSONObject();
             error.put("error",e);
             ret.println(error);
             ret.flush();
         }
     }
-
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Helper.corsFix(response, request);
-        PrintWriter ret = response.getWriter();
-        if(!Helper.isLoggedIn(request,response)){
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        }
-        ret.println();
-        ret.flush();
+
     }
 }

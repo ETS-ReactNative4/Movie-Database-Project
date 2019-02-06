@@ -25,15 +25,22 @@ class Cart extends Component {
     state = {
         valid: false,
         mounted: false,
-        carty: {}
+        carty: {},
+        customer: {}
     };
 
     componentDidMount() {
         this.setState({carty: this.props.cart}, function () {
             if (isEmpty(this.state.carty)) {
-                let crt = JSON.parse(localStorage.getItem("cart"));
+                let crt = JSON.parse(sessionStorage.getItem("cart"));
                 if (!isEmpty(crt)) {
                     this.setState({carty: crt})
+                }
+                let cust = JSON.parse(sessionStorage.getItem("customer"));
+                if(!isEmpty(cust)){
+                    this.setState({customer: cust}, function(){
+                        console.log(this.state);
+                    });
                 }
             }
             console.log(this.state.carty);
@@ -61,7 +68,7 @@ class Cart extends Component {
         this.setState({carty: crt}, function () {
             this.props.handleUpdateCart(this.state.carty);
             console.log(this.state.carty);
-            localStorage.setItem("cart", JSON.stringify(this.state.carty));
+            sessionStorage.setItem("cart", JSON.stringify(this.state.carty));
         });
     };
     handleMinus = (item) => {
@@ -73,12 +80,16 @@ class Cart extends Component {
         this.setState({carty: crt}, function () {
             this.props.handleUpdateCart(this.state.carty);
             console.log(this.state.carty);
-            localStorage.setItem("cart", JSON.stringify(this.state.carty));
+            sessionStorage.setItem("cart", JSON.stringify(this.state.carty));
         });
     };
 
     componentWillUnmount() {
         this.setState({mounted: false});
+    }
+    handleCheckout(){
+        let crt = {...this.state.carty}
+        crt['customerId'] = this.state.customer.id;
     }
 
     render() {
@@ -103,8 +114,8 @@ class Cart extends Component {
                                     this.state.carty[item].quantity}
                                 />
                                 <Button.Group compact attached={'bottom'}>
-                                    <Button icon={'minus'} onClick={() => this.handleMinus(this.state.carty[item])}/>
-                                    <Button icon={'plus'} onClick={() => this.handleAdd(this.state.carty[item])}/>
+                                    <Button icon={'minus'} color={'teal'} onClick={() => this.handleMinus(this.state.carty[item])}/>
+                                    <Button icon={'plus'} color={'teal'} onClick={() => this.handleAdd(this.state.carty[item])}/>
                                 </Button.Group>
                             </Container>
                         </Segment>
@@ -112,6 +123,7 @@ class Cart extends Component {
                     return (
                         <Container>
                             {items}
+                            <Button color={'green'} fluid content={'Checkout'}/>
                         </Container>
                     );
                 }

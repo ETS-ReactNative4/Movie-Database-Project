@@ -54,7 +54,6 @@ class Login extends Component{
             body: JSON.stringify(creds)
         }).then(
             (res) => {
-                console.log(res);
                 if(res.status === 403){
                     document.getElementById("Form").reset();
                     this.setState({valid: false});
@@ -63,8 +62,15 @@ class Login extends Component{
                 else{
                     this.setState({valid: true});
                 }
+                return res.json();
         }
-        ).catch((error) =>
+        ).then(
+            data => {
+                this.props.getCust(data);
+                console.log(data);
+            }
+        )
+            .catch((error) =>
                 console.log(error)
         )
     };
