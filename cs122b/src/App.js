@@ -97,7 +97,7 @@ class App extends Component {
                         <Route path="/login" exact render={(props) => <Login {...props} getCust={this.getCust}/>}/>
                         <Route path="/search" exact render={(props) => <Search {...props} handleAddToCart={this.handleAddToCart}/>}/>
                         <Route path="/browse" exact render={(props) => <Browse {...props} handleAddToCart={this.handleAddToCart}/>}/>
-                        <Route path="/cart" exact render={(props) => <Cart {...props} handleUpdateCart={this.handleUpdateCart} handleAddToCart={this.handleAddToCart} cart={this.state.cart}/>}/>
+                        <Route path="/cart" exact render={(props) => <Cart {...props} handleUpdateCart={this.handleUpdateCart} handleAddToCart={this.handleAddToCart} customer={this.state.customer} cart={this.state.cart}/>}/>
                     </div>
                 </BrowserRouter>
             </div>

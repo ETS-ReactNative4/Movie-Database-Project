@@ -36,14 +36,15 @@ class Cart extends Component {
                 if (!isEmpty(crt)) {
                     this.setState({carty: crt})
                 }
-                let cust = JSON.parse(sessionStorage.getItem("customer"));
-                if(!isEmpty(cust)){
-                    this.setState({customer: cust}, function(){
-                        console.log(this.state);
-                    });
-                }
             }
-            console.log(this.state.carty);
+        });
+        this.setState({customer: this.props.customer}, function () {
+            let cust = JSON.parse(sessionStorage.getItem("customer"));
+            if(!isEmpty(cust)){
+                this.setState({customer: cust}, function(){
+                    console.log(this.state);
+                });
+            }
         });
         fetch('http://' + window.location.hostname + ':8080/cs122b/login', {
             method: 'GET',
@@ -87,10 +88,24 @@ class Cart extends Component {
     componentWillUnmount() {
         this.setState({mounted: false});
     }
-    handleCheckout(){
-        let crt = {...this.state.carty}
-        crt['customerId'] = this.state.customer.id;
-    }
+    handleCheckout = event =>{
+        let crt = {...this.state.carty};
+        crt['customerId'] = this.state.customer["id"];
+        console.log(crt);
+        fetch('http://'+window.location.hostname+':8080/cs122b/sale', {
+            method: 'POST',
+            headers: {
+                "Content-Type":"application/json"
+            },
+            credentials: 'include',
+            body: JSON.stringify(crt)
+        }).then(
+            data => {
+                this.setState({records: data});
+                console.log(data);
+            }
+        ).catch((error) => console.log(error))
+    };
 
     render() {
         if (this.state.mounted && this.state.valid) {
@@ -123,7 +138,7 @@ class Cart extends Component {
                     return (
                         <Container>
                             {items}
-                            <Button color={'green'} fluid content={'Checkout'}/>
+                            <Button color={'green'} fluid content={'Checkout'} onClick={this.handleCheckout}/>
                         </Container>
                     );
                 }

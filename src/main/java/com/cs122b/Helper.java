@@ -57,17 +57,17 @@ public class Helper {
     }
     static JSONObject getSalesRecords(Connection con, JSONObject sale) throws SQLException {
         JSONObject records = new JSONObject();
-        Iterator<String> keys = records.keys();
+        Iterator<String> keys = sale.keys();
         Statement statement = con.createStatement();
         String query = null;
         while(keys.hasNext()){
             String key = keys.next();
             JSONArray stuff = new JSONArray();
-            if(records.get(key) instanceof  JSONObject){
-                for (int i = 0; i < Integer.parseInt(((JSONObject) records.get(key)).getString("quantity")); i++){
-                    query = "INSERT INTO sales(customerId, movieId, saleDate) VALUES ('"+records.getString("customerId")+"', '"+
+            if(sale.get(key) instanceof  JSONObject){
+                for (int i = 0; i < ((JSONObject) sale.get(key)).getInt("quantity"); i++){
+                    query = "INSERT INTO sales(customerId, movieId, saleDate) VALUES ('"+sale.getString("customerId")+"', '"+
                             key+"', DATE(NOW()))";
-                    statement.executeQuery(query);
+                    statement.executeUpdate(query);
                     query = "SELECT last_insert_id() as id";
                     ResultSet resultSet = statement.executeQuery(query);
                     resultSet.next();

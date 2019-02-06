@@ -34,8 +34,10 @@ public class Sale extends HttpServlet {
                 sbuild.append(param);
             }
             JSONObject sale = new JSONObject(sbuild.toString());
+            System.out.println(sale.toString());
             sale = Helper.getSalesRecords(connection, sale);
             if(!sale.isEmpty()){
+                System.out.println(sale);
                 ret.println(sale);
             }
             else{
