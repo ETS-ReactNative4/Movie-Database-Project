@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Redirect} from "react-router";
 import MyLoader from "../MyLoader/MyLoader";
-import {Button, Container, Grid, Header, Icon, Input, Item, Rail, Segment} from "semantic-ui-react";
+import {Button, Container, Form, Grid, Header, Icon, Input, Item, Modal, Rail, Segment} from "semantic-ui-react";
 
 function isEmpty(obj) {
     for (var prop in obj) {
@@ -26,8 +26,20 @@ class Cart extends Component {
         valid: false,
         mounted: false,
         carty: {},
-        customer: {}
+        customer: {},
+        formData: {
+            firstName: '',
+            lastName: '',
+            email: '',
+            address: '',
+            ccId: '',
+            expiration: ''
+        }
     };
+    constructor(){
+        super();
+        this.handleInputChange = this.handleInputChange.bind(this);
+    }
 
     componentDidMount() {
         this.setState({carty: this.props.cart}, function () {
@@ -40,8 +52,8 @@ class Cart extends Component {
         });
         this.setState({customer: this.props.customer}, function () {
             let cust = JSON.parse(sessionStorage.getItem("customer"));
-            if(!isEmpty(cust)){
-                this.setState({customer: cust}, function(){
+            if (!isEmpty(cust)) {
+                this.setState({customer: cust}, function () {
                     console.log(this.state);
                 });
             }
@@ -88,23 +100,31 @@ class Cart extends Component {
     componentWillUnmount() {
         this.setState({mounted: false});
     }
-    handleCheckout = event =>{
-        let crt = {...this.state.carty};
-        crt['customerId'] = this.state.customer["id"];
-        console.log(crt);
-        fetch('http://'+window.location.hostname+':8080/cs122b/sale', {
-            method: 'POST',
-            headers: {
-                "Content-Type":"application/json"
-            },
-            credentials: 'include',
-            body: JSON.stringify(crt)
-        }).then(
-            data => {
-                this.setState({records: data});
-                console.log(data);
-            }
-        ).catch((error) => console.log(error))
+    handleInputChange(e) {
+        let formData = Object.assign({}, this.state.formData);
+        formData[e.target.name] = e.target.value;
+        this.setState({formData})
+    }
+
+    handleCheckout = event => {
+        console.log(this.state.formData);
+        // let crt = {...this.state.carty};
+        // crt['customerId'] = this.state.customer["id"];
+        // console.log(crt);
+        // fetch('http://' + window.location.hostname + ':8080/cs122b/sale', {
+        //     method: 'POST',
+        //     headers: {
+        //         "Content-Type": "application/json"
+        //     },
+        //     credentials: 'include',
+        //     body: JSON.stringify(crt)
+        // }).then((res) => res.json())
+        //     .then(
+        //         data => {
+        //             this.setState({records: data});
+        //             console.log(data);
+        //         }
+        //     ).catch((error) => console.log(error))
     };
 
     render() {
@@ -129,8 +149,10 @@ class Cart extends Component {
                                     this.state.carty[item].quantity}
                                 />
                                 <Button.Group compact attached={'bottom'}>
-                                    <Button icon={'minus'} color={'teal'} onClick={() => this.handleMinus(this.state.carty[item])}/>
-                                    <Button icon={'plus'} color={'teal'} onClick={() => this.handleAdd(this.state.carty[item])}/>
+                                    <Button icon={'minus'} color={'teal'}
+                                            onClick={() => this.handleMinus(this.state.carty[item])}/>
+                                    <Button icon={'plus'} color={'teal'}
+                                            onClick={() => this.handleAdd(this.state.carty[item])}/>
                                 </Button.Group>
                             </Container>
                         </Segment>
@@ -138,7 +160,50 @@ class Cart extends Component {
                     return (
                         <Container>
                             {items}
-                            <Button color={'green'} fluid content={'Checkout'} onClick={this.handleCheckout}/>
+                            <Modal closeIcon
+                                trigger={
+                                    <Button color={'green'} fluid content={'Checkout'}/>
+                                }
+                                >
+                                <Header icon={'shopping cart'} content={'Checkout'}/>
+                                <Modal.Content>
+                                    <Form>
+                                        <Form.Group>
+                                            <Form.Input icon={'male'}
+                                                        name={'firstName'}
+                                                        onChange={this.handleInputChange}
+                                                        placeholder={'First Name'}/>
+                                            <Form.Input icon={'male'}
+                                                        name={'lastName'}
+                                                        onChange={this.handleInputChange}
+                                                        placeholder={'Last Name'}/>
+                                            <Form.Input icon={'mail'}
+                                                        name={'email'}
+                                                        onChange={this.handleInputChange}
+                                                        placeholder={'E-mail'}/>
+                                        </Form.Group>
+                                        <Form.Group>
+                                            <Form.Input icon={'address book'}
+                                                        name={'address'}
+                                                        onChange={this.handleInputChange}
+                                                        placeholder={'Address'}/>
+                                            <Form.Input icon={'credit card'}
+                                                        name={'ccId'}
+                                                        onChange={this.handleInputChange}
+                                                        placeholder={'Credit Card'}
+                                            />
+                                            <Form.Input icon={'calendar'}
+                                                        name={'expiration'}
+                                                        onChange={this.handleInputChange}
+                                                        placeholder={'Expiration Date'}
+                                            />
+                                        </Form.Group>
+                                    </Form>
+                                </Modal.Content>
+                                <Modal.Actions>
+                                    <Button color={'green'} content={'Confirm'} onClick={this.handleCheckout}/>
+                                </Modal.Actions>
+                            </Modal>
                         </Container>
                     );
                 }
