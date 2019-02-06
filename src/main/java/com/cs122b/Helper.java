@@ -144,7 +144,8 @@ public class Helper {
     static JSONObject isValidUser(Connection con, JSONObject data) throws SQLException{
         JSONObject customer = null;
         Statement statement = con.createStatement();
-        String query = "SELECT id, firstName, lastName, ccId, email from customers where email='"+
+        String query = "SELECT customers.id, customers.firstName, customers.lastName, ccId, email, address, email, expiration" +
+                "  from customers INNER JOIN creditcards on customers.ccId=creditcards.id WHERE email='"+
                 data.getString("username")+"' and password='"+data.getString("password")+"'";
         ResultSet resultSet = statement.executeQuery(query);
         while(resultSet.next()){
@@ -154,6 +155,8 @@ public class Helper {
             customer.put("lastName", resultSet.getString("lastName"));
             customer.put("ccId", resultSet.getString("ccId"));
             customer.put("email", resultSet.getString("email"));
+            customer.put("address", resultSet.getString("address"));
+            customer.put("expiration", resultSet.getString("expiration"));
         }
         return customer;
     }
