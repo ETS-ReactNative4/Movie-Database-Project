@@ -42,7 +42,9 @@ public class SearchMovies extends HttpServlet {
             String star = request.getParameter("name");
             String offset = request.getParameter("offset");
             String limit = request.getParameter("limit");
-            ResultSet resultSet = Helper.getMovies(connection,title, year, director, star, offset, numRecords, limit);
+            String sort = request.getParameter("sort");
+            String order = request.getParameter("order");
+            ResultSet resultSet = Helper.getMovies(connection,title, year, director, star, offset, numRecords, limit, sort, order);
             JSONObject encapsulator = new JSONObject();
             encapsulator.put("numRecords", numRecords.num);
             JSONArray relatedMovies = new JSONArray();

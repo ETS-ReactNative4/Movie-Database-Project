@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.*;
+import java.util.Iterator;
 
 public class Helper {
     static String loginUser = "username";
@@ -54,8 +55,31 @@ public class Helper {
         System.out.println(query);
         return statement.executeQuery(query);
     }
+    static JSONObject getSalesRecords(Connection con, JSONObject sale) throws SQLException {
+        JSONObject records = new JSONObject();
+        Iterator<String> keys = sale.keys();
+        Statement statement = con.createStatement();
+        String query = null;
+        while(keys.hasNext()){
+            String key = keys.next();
+            JSONArray stuff = new JSONArray();
+            if(sale.get(key) instanceof  JSONObject){
+                for (int i = 0; i < ((JSONObject) sale.get(key)).getInt("quantity"); i++){
+                    query = "INSERT INTO sales(customerId, movieId, saleDate) VALUES ('"+sale.getString("customerId")+"', '"+
+                            key+"', DATE(NOW()))";
+                    statement.executeUpdate(query);
+                    query = "SELECT last_insert_id() as id";
+                    ResultSet resultSet = statement.executeQuery(query);
+                    resultSet.next();
+                    stuff.put(resultSet.getInt("id"));
+                }
+                records.put(key, stuff);
+            }
+        }
+        return records;
+    }
     static ResultSet getMovies(Connection con, String title, String year, String director, String star,
-                               String offset, SearchMovies.NumRecords numRecords, String limit) throws SQLException{
+                               String offset, SearchMovies.NumRecords numRecords, String limit, String sort, String order) throws SQLException{
         Statement statement = con.createStatement();
         // Turn all null strings into ""
         title = (title != null) ? title : "";
@@ -64,6 +88,8 @@ public class Helper {
         star = (star != null) ? star : "";
         offset = (offset != null) ? offset : "0";
         limit = (limit != null) ? limit : "10";
+        sort = (sort != null) ? sort : "rating";
+        order = (order != null) ? order : "DESC";
 
 
         String query = "Select distinct id, title, `year`, director, rating FROM "+
@@ -81,7 +107,7 @@ public class Helper {
         ResultSet res = statement.executeQuery(totalCount);
         res.next();
         numRecords.num = res.getInt("count");
-        query = query + " LIMIT "+offset+", "+limit;
+        query = query + " ORDER BY "+sort+" "+order+" LIMIT "+offset+", "+limit;
         System.out.println(query);
         return statement.executeQuery(query);
     }
@@ -115,13 +141,24 @@ public class Helper {
         Statement statement = con.createStatement();
         return statement.executeQuery(movie_query);
     }
-    static boolean isValidUser(Connection con, JSONObject data) throws SQLException{
+    static JSONObject isValidUser(Connection con, JSONObject data) throws SQLException{
+        JSONObject customer = null;
         Statement statement = con.createStatement();
-        String query = "SELECT COUNT(*) as valid from customers where email='"+
+        String query = "SELECT customers.id, customers.firstName, customers.lastName, ccId, email, address, email, expiration" +
+                "  from customers INNER JOIN creditcards on customers.ccId=creditcards.id WHERE email='"+
                 data.getString("username")+"' and password='"+data.getString("password")+"'";
         ResultSet resultSet = statement.executeQuery(query);
-        resultSet.next();
-        return (resultSet.getInt("valid") == 1);
+        while(resultSet.next()){
+            customer = new JSONObject();
+            customer.put("id", resultSet.getString("id"));
+            customer.put("firstName", resultSet.getString("firstName"));
+            customer.put("lastName", resultSet.getString("lastName"));
+            customer.put("ccId", resultSet.getString("ccId"));
+            customer.put("email", resultSet.getString("email"));
+            customer.put("address", resultSet.getString("address"));
+            customer.put("expiration", resultSet.getString("expiration"));
+        }
+        return customer;
     }
     static void corsFix(HttpServletResponse resp, HttpServletRequest request) {
         String domain = "http://";

@@ -9,64 +9,102 @@ import Login from "./Login/Login.js";
 import 'semantic-ui-css/semantic.min.css';
 import Search from "./Search/Search";
 import Browse from "./Browse/Browse";
+import Cart, {isEmpty} from "./Cart/Cart";
 import {loadReCaptcha} from 'react-recaptcha-google';
 
 class App extends Component {
-  state = {};
-  handleMenuClick = (e, {name}) => this.setState({activeItem: name});
-  componentDidMount() {
-    loadReCaptcha();
-  }
-
-  render() {
-    const {activeItem} = this.state;
-    return (
-      <div>
-        <BrowserRouter>
-          <div>
-            <Menu inverted fluid widths={3}>
-              <Menu.Item
-                as={Link}
-                to={'/'}
-                name='top-charts'
-                active={activeItem === 'top-charts'}
-                header
-                onClick={this.handleMenuClick}
-              >
-                Top Twenty
-              </Menu.Item>
-              <Menu.Item
-                as={Link}
-                to={'/search'}
-                name='search'
-                active={activeItem === 'search'}
-                header
-                onClick={this.handleMenuClick}
-              >
-                Search
-              </Menu.Item>
-              <Menu.Item
-                as={Link}
-                to={'/browse'}
-                name='browse'
-                active={activeItem === 'browse'}
-                header
-                onClick={this.handleMenuClick}
-              >
-                Browse
-              </Menu.Item>
-            </Menu>
-            <Route path="/" exact component={Movies}/>
-            <Route path="/star" exact component={Star}/>
-            <Route path="/movie" exact component={Film}/>
-            <Route path="/login" exact component={Login}/>
-            <Route path="/search" exact component={Search}/>
-            <Route path="/browse" exact component={Browse}/>
-          </div>
-        </BrowserRouter>
-      </div>
-    );
-  }
+    state = {cart: {},customer: {}};
+    constructor(){
+        super();
+        this.getCust = this.getCust.bind(this);
+    }
+    handleAddToCart = (item) => {
+        let crt = {...this.state.cart};
+        if(item.id in crt){
+            crt[item.id]["quantity"] += 1
+        }
+        else{
+            crt[item.id] = item;
+            crt[item.id]["quantity"] = 1;
+        }
+        this.setState({cart: crt}, function(){
+            sessionStorage.setItem("cart", JSON.stringify(this.state.cart));
+        });
+    };
+    handleUpdateCart = (carty) => {
+        this.setState({cart: carty});
+    };
+    getCust(cust){
+        this.setState({custId: cust});
+        sessionStorage.setItem("customer", JSON.stringify(cust));
+    }
+    componentDidMount(){
+        loadReCaptcha();
+        let crt = JSON.parse(sessionStorage.getItem("cart"));
+        if(!isEmpty(crt)){
+            this.setState({cart: crt});
+        }
+        let cust = JSON.parse(sessionStorage.getItem("customer"));
+        if(!isEmpty(cust)){
+            this.setState({customer: cust}, function(){
+                console.log(this.state);
+            });
+        }
+    }
+    render() {
+        return (
+            <div>
+                <BrowserRouter>
+                    <div>
+                        <Menu inverted fluid widths={4}>
+                            <Menu.Item
+                                as={Link}
+                                to={'/'}
+                                name='top-charts'
+                                header
+                            >
+                                Top Twenty
+                            </Menu.Item>
+                            <Menu.Item
+                                as={Link}
+                                to={'/search'}
+                                name='search'
+                                header
+                            >
+                                Search
+                            </Menu.Item>
+                            <Menu.Item
+                                as={Link}
+                                to={{
+                                    pathname: '/browse',
+                                    state: {genre: "", reload: "no"}
+                                }}
+                                name='browse'
+                                header
+                            >
+                                Browse
+                            </Menu.Item>
+                            <Menu.Item
+                                as={Link}
+                                to={'/cart'}
+                                name='cart'
+                                header
+                            >
+                                Checkout
+                            </Menu.Item>
+                        </Menu>
+                        <Route path="/" exact render={(props) => <Movies {...props} handleAddToCart={this.handleAddToCart}/>}/>
+                        <Route path="/star" exact render={(props) => <Star {...props} handleAddToCart={this.handleAddToCart}/>}/>
+                        <Route path="/movie" exact render={(props) => <Film {...props} handleAddToCart={this.handleAddToCart}/>}/>
+                        <Route path="/login" exact render={(props) => <Login {...props} getCust={this.getCust}/>}/>
+                        <Route path="/search" exact render={(props) => <Search {...props} handleAddToCart={this.handleAddToCart}/>}/>
+                        <Route path="/browse" exact render={(props) => <Browse {...props} handleAddToCart={this.handleAddToCart}/>}/>
+                        <Route path="/cart" exact render={(props) => <Cart {...props} handleUpdateCart={this.handleUpdateCart} handleAddToCart={this.handleAddToCart} customer={this.state.customer} cart={this.state.cart}/>}/>
+                    </div>
+                </BrowserRouter>
+            </div>
+        );
+    }
 }
 
 export default App;
