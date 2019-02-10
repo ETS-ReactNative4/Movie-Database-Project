@@ -37,6 +37,17 @@ public class Login extends HttpServlet {
                 sbuild.append(param);
             }
             JSONObject credentials = new JSONObject(sbuild.toString());
+            String gRecaptchaResponse = credentials.getString("g_recaptcha_response");
+            System.out.println("gRecaptchaResponse=" + gRecaptchaResponse);
+
+            // Verify reCAPTCHA
+            try {
+                RecaptchaVerifyUtils.verify(gRecaptchaResponse);
+            } catch (Exception e) {
+                ret.println(e.toString());
+                ret.close();
+                return;
+            }
             credentials = Helper.isValidUser(connection, credentials);
             if(credentials != null){
                 request.getSession();
