@@ -9,10 +9,14 @@ import Login from "./Login/Login.js";
 import 'semantic-ui-css/semantic.min.css';
 import Search from "./Search/Search";
 import Browse from "./Browse/Browse";
+import {loadReCaptcha} from 'react-recaptcha-google';
 
 class App extends Component {
   state = {};
   handleMenuClick = (e, {name}) => this.setState({activeItem: name});
+  componentDidMount() {
+    loadReCaptcha();
+  }
 
   render() {
     const {activeItem} = this.state;
