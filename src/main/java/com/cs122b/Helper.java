@@ -29,47 +29,80 @@ public class Helper {
     }
     static ResultSet getBrowseMovies(Connection con, String genre, String letter, String offset,
                                      String limit, String sort, String order, SearchMovies.NumRecords numRecords) throws SQLException {
-        Statement statement = con.createStatement();
+        PreparedStatement statement = null;
         sort = (sort != null) ? sort : "rating";
         order = (order != null) ? order : "DESC";
         offset = (offset != null) ? offset : "0";
         limit = (limit != null) ? limit : "10";
         letter = (letter != null) ? letter : "A";
-        String query = null;
+        String query;
+        String totalCount;
+        ResultSet res = null;
         if(!genre.equals("")){
             query = "SELECT movies.id, movies.title, `year`, director, genres.name, rating FROM genres_in_movies\n" +
                     "\tINNER JOIN movies ON genres_in_movies.movieId=movies.id\n" +
                     "    INNER JOIN genres on genres_in_movies.genreId=genres.id\n" +
                     "    INNER JOIN ratings ON genres_in_movies.movieId=ratings.movieId" +
-                    "   WHERE genres.name LIKE '"+genre+"'";
+                    "   WHERE genres.name LIKE ?";
+            totalCount = "Select count(*) as count from ("+query+") as distinctrecords";
+            statement = con.prepareStatement(totalCount);
+            statement.setString(1, genre);
+            res = statement.executeQuery();
         }
         else{
             query = "Select id, title, `year`, director, rating from movies " +
-                    "INNER JOIN ratings on movies.id=ratings.movieId where title LIKE '"+letter+"%'";
+                    "INNER JOIN ratings on movies.id=ratings.movieId where title LIKE ?";
+            totalCount = "Select count(*) as count from ("+query+") as distinctrecords";
+            statement = con.prepareStatement(totalCount);
+            statement.setString(1, letter+"%");
+            res = statement.executeQuery();
         }
-        String totalCount = "Select count(*) as count from ("+query+") as distinctrecords";
-        ResultSet res = statement.executeQuery(totalCount);
         res.next();
         numRecords.num = res.getInt("count");
-        query = query + " ORDER BY "+sort+" "+order+" LIMIT "+offset+", "+limit;
-        System.out.println(query);
-        return statement.executeQuery(query);
+
+        if(sort.equals("rating")){
+            query = query + " ORDER BY rating ";
+        }
+        else{
+
+            query = query + " ORDER BY title ";
+        }
+        if(order.equals("DESC")){
+            query = query + "DESC LIMIT ?, ?";
+        }
+        else{
+            query = query + "ASC LIMIT ?, ?";
+        }
+        statement = con.prepareStatement(query);
+        if(!genre.equals("")){
+            statement.setString(1, genre);
+        }
+        else{
+            statement.setString(1, letter+"%");
+        }
+        statement.setInt(2, Integer.parseInt(offset));
+        statement.setInt(3, Integer.parseInt(limit));
+        System.out.println(statement.toString());
+        return statement.executeQuery();
     }
     static JSONObject getSalesRecords(Connection con, JSONObject sale) throws SQLException {
         JSONObject records = new JSONObject();
         Iterator<String> keys = sale.keys();
-        Statement statement = con.createStatement();
+        PreparedStatement statement;
+        Statement st = con.createStatement();
         String query = null;
         while(keys.hasNext()){
             String key = keys.next();
             JSONArray stuff = new JSONArray();
             if(sale.get(key) instanceof  JSONObject){
                 for (int i = 0; i < ((JSONObject) sale.get(key)).getInt("quantity"); i++){
-                    query = "INSERT INTO sales(customerId, movieId, saleDate) VALUES ('"+sale.getString("customerId")+"', '"+
-                            key+"', DATE(NOW()))";
-                    statement.executeUpdate(query);
+                    query = "INSERT INTO sales(customerId, movieId, saleDate) VALUES (?, ?, DATE(NOW()))";
+                    statement = con.prepareStatement(query);
+                    statement.setInt(1, Integer.parseInt(sale.getString("customerId")));
+                    statement.setString(2, key);
+                    statement.executeUpdate();
                     query = "SELECT last_insert_id() as id";
-                    ResultSet resultSet = statement.executeQuery(query);
+                    ResultSet resultSet = st.executeQuery(query);
                     resultSet.next();
                     stuff.put(resultSet.getInt("id"));
                 }
@@ -80,7 +113,6 @@ public class Helper {
     }
     static ResultSet getMovies(Connection con, String title, String year, String director, String star,
                                String offset, SearchMovies.NumRecords numRecords, String limit, String sort, String order) throws SQLException{
-        Statement statement = con.createStatement();
         // Turn all null strings into ""
         title = (title != null) ? title : "";
         year = (year != null) ? year : "";
@@ -91,7 +123,6 @@ public class Helper {
         sort = (sort != null) ? sort : "rating";
         order = (order != null) ? order : "DESC";
 
-
         String query = "Select distinct id, title, `year`, director, rating FROM "+
                 "(SELECT movies.id, title, `year`, director, rating, starId, `name` " +
                 "FROM stars_in_movies " +
@@ -100,16 +131,40 @@ public class Helper {
                 "INNER JOIN stars " +
                 "ON stars_in_movies.starId = stars.id " +
                 "left join ratings " +
-                "ON movies.id = ratings.movieId WHERE title LIKE '%"+title+
-                "%' AND `year` LIKE '%"+year+"%' AND director LIKE '%"+director+
-                "%' AND `name` LIKE '%"+star+"%') as records";
+                "ON movies.id = ratings.movieId WHERE title LIKE ? "+
+                "AND `year` LIKE ? AND director LIKE ? "+
+                "AND `name` LIKE ?) as records";
         String totalCount = "Select count(*) as count from ("+query+") as distinctrecords";
-        ResultSet res = statement.executeQuery(totalCount);
+        PreparedStatement statement = con.prepareStatement(totalCount);
+        statement.setString(1, "%"+title+"%");
+        statement.setString(2, "%"+year+"%");
+        statement.setString(3, "%"+director+"%");
+        statement.setString(4, "%"+star+"%");
+        ResultSet res = statement.executeQuery();
         res.next();
         numRecords.num = res.getInt("count");
-        query = query + " ORDER BY "+sort+" "+order+" LIMIT "+offset+", "+limit;
+        if(sort.equals("rating")){
+            query = query + " ORDER BY rating ";
+        }
+        else{
+
+            query = query + " ORDER BY name ";
+        }
+        if(order.equals("DESC")){
+            query = query + "DESC LIMIT ?, ?";
+        }
+        else{
+            query = query + "ASC LIMIT ?, ?";
+        }
+        statement = con.prepareStatement(query);
         System.out.println(query);
-        return statement.executeQuery(query);
+        statement.setString(1, "%"+title+"%");
+        statement.setString(2, "%"+year+"%");
+        statement.setString(3, "%"+director+"%");
+        statement.setString(4, "%"+star+"%");
+        statement.setInt(5, Integer.parseInt(offset));
+        statement.setInt(6, Integer.parseInt(limit));
+        return statement.executeQuery();
     }
     static ResultSet getTwentyStars(Connection con) throws SQLException {
         Statement statement = con.createStatement();
@@ -117,37 +172,43 @@ public class Helper {
         return statement.executeQuery(query);
     }
     static ResultSet getGenres(Connection con, String id) throws SQLException {
-        String genre_query = "SELECT name FROM genres where id in (select genreId from genres_in_movies where movieId=\'"+id+"\')";
-        Statement statement = con.createStatement();
-        return statement.executeQuery(genre_query);
+        String genre_query = "SELECT name FROM genres where id in (select genreId from genres_in_movies where movieId=?)";
+        PreparedStatement statement = con.prepareStatement(genre_query);
+        statement.setString(1, id);
+        return statement.executeQuery();
     }
     static ResultSet getStars(Connection con, String id) throws SQLException {
-        String star_query = "SELECT name, id FROM stars where id in (select starId from stars_in_movies where movieId=\'"+id+"\')";
-        Statement statement = con.createStatement();
-        return statement.executeQuery(star_query);
+        String star_query = "SELECT name, id FROM stars where id in (select starId from stars_in_movies where movieId=?)";
+        PreparedStatement statement = con.prepareStatement(star_query);
+        statement.setString(1, id);
+        return statement.executeQuery();
     }
     static ResultSet getSingleStar(Connection con, String id) throws SQLException {
-        Statement statement = con.createStatement();
-        String query = "SELECT * from stars where id =\'"+id+"\'";
-        return statement.executeQuery(query);
+        String query = "SELECT * from stars where id = ?";
+        PreparedStatement statement = con.prepareStatement(query);
+        statement.setString(1, id);
+        return statement.executeQuery();
     }
     static ResultSet getSingleMovie(Connection con, String id) throws SQLException{
-        Statement statement = con.createStatement();
-        String query = "SELECT * from movies left join ratings on movies.id=ratings.movieId where movies.id='"+id+"'";
-        return statement.executeQuery(query);
+        String query = "SELECT * from movies left join ratings on movies.id=ratings.movieId where movies.id=?";
+        PreparedStatement statement = con.prepareStatement(query);
+        statement.setString(1, id);
+        return statement.executeQuery();
     }
     static ResultSet getMovieTitles(Connection con, String id) throws SQLException{
-        String movie_query = "SELECT title, id FROM movies where id in (select movieId from stars_in_movies where starId=\'"+id+"\')";
-        Statement statement = con.createStatement();
-        return statement.executeQuery(movie_query);
+        String movie_query = "SELECT title, id FROM movies where id in (select movieId from stars_in_movies where starId=?)";
+        PreparedStatement statement = con.prepareStatement(movie_query);
+        statement.setString(1, id);
+        return statement.executeQuery();
     }
     static JSONObject isValidUser(Connection con, JSONObject data) throws SQLException{
         JSONObject customer = null;
-        Statement statement = con.createStatement();
         String query = "SELECT customers.id, customers.firstName, customers.lastName, ccId, email, address, email, expiration" +
-                "  from customers INNER JOIN creditcards on customers.ccId=creditcards.id WHERE email='"+
-                data.getString("username")+"' and password='"+data.getString("password")+"'";
-        ResultSet resultSet = statement.executeQuery(query);
+                "  from customers INNER JOIN creditcards on customers.ccId=creditcards.id WHERE email=? and password=?";
+        PreparedStatement statement = con.prepareStatement(query);
+        statement.setString(1, data.getString("username"));
+        statement.setString(2, data.getString("password"));
+        ResultSet resultSet = statement.executeQuery();
         while(resultSet.next()){
             customer = new JSONObject();
             customer.put("id", resultSet.getString("id"));
