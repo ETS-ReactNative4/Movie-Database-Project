@@ -10,6 +10,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.*;
 import java.util.Iterator;
+import org.jasypt.util.password.StrongPasswordEncryptor;
 
 public class Helper {
     static String loginUser = "username";
@@ -201,23 +202,43 @@ public class Helper {
         statement.setString(1, id);
         return statement.executeQuery();
     }
-    static JSONObject isValidUser(Connection con, JSONObject data) throws SQLException{
-        JSONObject customer = null;
-        String query = "SELECT customers.id, customers.firstName, customers.lastName, ccId, email, address, email, expiration" +
-                "  from customers INNER JOIN creditcards on customers.ccId=creditcards.id WHERE email=? and password=?";
+    static JSONObject isValidEmployee(Connection con, JSONObject data) throws SQLException{
+        JSONObject employee = null;
+        String query = "SELECT * from employees where email=?";
         PreparedStatement statement = con.prepareStatement(query);
         statement.setString(1, data.getString("username"));
-        statement.setString(2, data.getString("password"));
         ResultSet resultSet = statement.executeQuery();
+        boolean success;
         while(resultSet.next()){
-            customer = new JSONObject();
-            customer.put("id", resultSet.getString("id"));
-            customer.put("firstName", resultSet.getString("firstName"));
-            customer.put("lastName", resultSet.getString("lastName"));
-            customer.put("ccId", resultSet.getString("ccId"));
-            customer.put("email", resultSet.getString("email"));
-            customer.put("address", resultSet.getString("address"));
-            customer.put("expiration", resultSet.getString("expiration"));
+            success = new StrongPasswordEncryptor().checkPassword(data.getString("password"), resultSet.getString("password"));
+            if(success){
+                employee = new JSONObject();
+                employee.put("fullname", resultSet.getString("fullname"));
+                employee.put("email", resultSet.getString("email"));
+            }
+        }
+        return employee;
+    }
+    static JSONObject isValidUser(Connection con, JSONObject data) throws SQLException{
+        JSONObject customer = null;
+        String query = "SELECT customers.id, customers.password, customers.firstName, customers.lastName, ccId, email, address, email, expiration" +
+                "  from customers INNER JOIN creditcards on customers.ccId=creditcards.id WHERE email=?";
+        PreparedStatement statement = con.prepareStatement(query);
+        statement.setString(1, data.getString("username"));
+        ResultSet resultSet = statement.executeQuery();
+        boolean success;
+        while(resultSet.next()){
+            success = new StrongPasswordEncryptor().checkPassword(data.getString("password"), resultSet.getString("password"));
+            if(success){
+                customer = new JSONObject();
+                customer.put("id", resultSet.getString("id"));
+                customer.put("firstName", resultSet.getString("firstName"));
+                customer.put("lastName", resultSet.getString("lastName"));
+                customer.put("ccId", resultSet.getString("ccId"));
+                customer.put("email", resultSet.getString("email"));
+                customer.put("address", resultSet.getString("address"));
+                customer.put("expiration", resultSet.getString("expiration"));
+            }
         }
         return customer;
     }

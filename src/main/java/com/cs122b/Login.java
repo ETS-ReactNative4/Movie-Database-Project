@@ -41,22 +41,9 @@ public class Login extends HttpServlet {
             System.out.println("gRecaptchaResponse=" + gRecaptchaResponse);
 
             // Verify reCAPTCHA
-            try {
-                RecaptchaVerifyUtils.verify(gRecaptchaResponse);
-            } catch (Exception e) {
-                ret.println(e.toString());
-                ret.close();
-                return;
-            }
+            if (EmployeeLogin.RecaptchaVerify(ret, gRecaptchaResponse)) return;
             credentials = Helper.isValidUser(connection, credentials);
-            if(credentials != null){
-                request.getSession();
-                System.out.println("Good");
-            }
-            else{
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                System.out.println("Bad");
-            }
+            EmployeeLogin.VerifyCredentials(request, response, credentials);
             connection.close();
             ret.println(credentials);
             ret.flush();
