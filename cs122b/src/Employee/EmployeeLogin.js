@@ -1,4 +1,7 @@
 import Login from "../Login/Login";
+import React from "react";
+import {Redirect} from "react-router";
+import {isEmpty} from "../Cart/Cart";
 
 class EmployeeLogin extends Login{
   componentDidMount() {
@@ -11,13 +14,25 @@ class EmployeeLogin extends Login{
           console.log("Invalid session");
         } else {
           console.log("Logged in");
-          this.setState({valid: true});
+          if(isEmpty(this.props.employee)){
+            console.log("...but not as employee")
+            this.setState({valid: false});
+          }
+          else{
+            this.setState({valid: true});
+          }
         }
         this.setState({mounted: true});
       }
     ).catch((error) =>
       console.log(error)
     )
+  }
+  getRetVal() {
+    console.log("Going to browse");
+    return (
+      <Redirect to={"/employee"}/>
+    );
   }
   getSession(creds) {
     fetch('http://' + window.location.hostname + ':8080/cs122b/employeelogin', {

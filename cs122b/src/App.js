@@ -10,15 +10,16 @@ import 'semantic-ui-css/semantic.min.css';
 import Search from "./Search/Search";
 import Browse from "./Browse/Browse";
 import Cart, {isEmpty} from "./Cart/Cart";
-import {loadReCaptcha} from 'react-recaptcha-google';
 import EmployeeLogin from "./Employee/EmployeeLogin";
+import EmployeeDashboard from "./Employee/EmployeeDashboard";
 
 class App extends Component {
-  state = {cart: {}, customer: {}};
+  state = {cart: {}, customer: {}, employee: {}};
 
   constructor() {
     super();
     this.getCust = this.getCust.bind(this);
+    this.getEmp = this.getEmp.bind(this);
   }
 
   handleAddToCart = (item) => {
@@ -37,14 +38,17 @@ class App extends Component {
   handleUpdateCart = (carty) => {
     this.setState({cart: carty});
   };
+  getEmp(emp){
+    this.setState({customer: emp});
+    sessionStorage.setItem("employee", JSON.stringify(emp));
+  }
 
   getCust(cust) {
-    this.setState({custId: cust});
+    this.setState({customer: cust});
     sessionStorage.setItem("customer", JSON.stringify(cust));
   }
 
   componentDidMount() {
-    loadReCaptcha();
     let crt = JSON.parse(sessionStorage.getItem("cart"));
     if (!isEmpty(crt)) {
       this.setState({cart: crt});
@@ -112,7 +116,8 @@ class App extends Component {
             <Route path="/star" exact render={(props) => <Star {...props} handleAddToCart={this.handleAddToCart}/>}/>
             <Route path="/movie" exact render={(props) => <Film {...props} handleAddToCart={this.handleAddToCart}/>}/>
             <Route path="/login" exact render={(props) => <Login {...props} getCust={this.getCust}/>}/>
-            <Route path="/emplogin" exact render={(props) => <EmployeeLogin {...props} />}/>
+            <Route path="/emplogin" exact render={(props) => <EmployeeLogin {...props} getCust={this.getEmp} employee={this.state.employee}/>}/>
+            <Route path="/employee" exact render={(props) => <EmployeeDashboard {...props}/>}/>
             <Route path="/search" exact
                    render={(props) => <Search {...props} handleAddToCart={this.handleAddToCart}/>}/>
             <Route path="/browse" exact

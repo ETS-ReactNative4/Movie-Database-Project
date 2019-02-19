@@ -81,12 +81,17 @@ class Login extends Component {
     ).then(
       data => {
         this.props.getCust(data);
-        console.log(data);
       }
     )
       .catch((error) =>
         console.log(error)
       )
+  }
+
+  getRetVal() {
+    return (
+      <Redirect to={"/"}/>
+    );
   }
 
   render() {
@@ -137,7 +142,9 @@ class Login extends Component {
     } else if (this.state.valid && this.state.mounted) {
       console.log("Back to home");
       return (
-        <Redirect to={"/"}/>
+        <div>
+          {this.getRetVal()}
+        </div>
       );
     } else {
       return (
