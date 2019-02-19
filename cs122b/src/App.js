@@ -11,100 +11,121 @@ import Search from "./Search/Search";
 import Browse from "./Browse/Browse";
 import Cart, {isEmpty} from "./Cart/Cart";
 import {loadReCaptcha} from 'react-recaptcha-google';
+import EmployeeLogin from "./Employee/EmployeeLogin";
 
 class App extends Component {
-    state = {cart: {},customer: {}};
-    constructor(){
-        super();
-        this.getCust = this.getCust.bind(this);
+  state = {cart: {}, customer: {}};
+
+  constructor() {
+    super();
+    this.getCust = this.getCust.bind(this);
+  }
+
+  handleAddToCart = (item) => {
+    let crt = {...this.state.cart};
+    if (item.id in crt) {
+      crt[item.id]["quantity"] += 1
     }
-    handleAddToCart = (item) => {
-        let crt = {...this.state.cart};
-        if(item.id in crt){
-            crt[item.id]["quantity"] += 1
-        }
-        else{
-            crt[item.id] = item;
-            crt[item.id]["quantity"] = 1;
-        }
-        this.setState({cart: crt}, function(){
-            sessionStorage.setItem("cart", JSON.stringify(this.state.cart));
-        });
-    };
-    handleUpdateCart = (carty) => {
-        this.setState({cart: carty});
-    };
-    getCust(cust){
-        this.setState({custId: cust});
-        sessionStorage.setItem("customer", JSON.stringify(cust));
+    else {
+      crt[item.id] = item;
+      crt[item.id]["quantity"] = 1;
     }
-    componentDidMount(){
-        loadReCaptcha();
-        let crt = JSON.parse(sessionStorage.getItem("cart"));
-        if(!isEmpty(crt)){
-            this.setState({cart: crt});
-        }
-        let cust = JSON.parse(sessionStorage.getItem("customer"));
-        if(!isEmpty(cust)){
-            this.setState({customer: cust}, function(){
-                console.log(this.state);
-            });
-        }
+    this.setState({cart: crt}, function () {
+      sessionStorage.setItem("cart", JSON.stringify(this.state.cart));
+    });
+  };
+  handleUpdateCart = (carty) => {
+    this.setState({cart: carty});
+  };
+
+  getCust(cust) {
+    this.setState({custId: cust});
+    sessionStorage.setItem("customer", JSON.stringify(cust));
+  }
+
+  componentDidMount() {
+    loadReCaptcha();
+    let crt = JSON.parse(sessionStorage.getItem("cart"));
+    if (!isEmpty(crt)) {
+      this.setState({cart: crt});
     }
-    render() {
-        return (
-            <div>
-                <BrowserRouter>
-                    <div>
-                        <Menu inverted fluid widths={4}>
-                            <Menu.Item
-                                as={Link}
-                                to={'/'}
-                                name='top-charts'
-                                header
-                            >
-                                Top Twenty
-                            </Menu.Item>
-                            <Menu.Item
-                                as={Link}
-                                to={'/search'}
-                                name='search'
-                                header
-                            >
-                                Search
-                            </Menu.Item>
-                            <Menu.Item
-                                as={Link}
-                                to={{
-                                    pathname: '/browse',
-                                    state: {genre: "", reload: "no"}
-                                }}
-                                name='browse'
-                                header
-                            >
-                                Browse
-                            </Menu.Item>
-                            <Menu.Item
-                                as={Link}
-                                to={'/cart'}
-                                name='cart'
-                                header
-                            >
-                                Checkout
-                            </Menu.Item>
-                        </Menu>
-                        <Route path="/" exact render={(props) => <Movies {...props} handleAddToCart={this.handleAddToCart}/>}/>
-                        <Route path="/star" exact render={(props) => <Star {...props} handleAddToCart={this.handleAddToCart}/>}/>
-                        <Route path="/movie" exact render={(props) => <Film {...props} handleAddToCart={this.handleAddToCart}/>}/>
-                        <Route path="/login" exact render={(props) => <Login {...props} getCust={this.getCust}/>}/>
-                        <Route path="/search" exact render={(props) => <Search {...props} handleAddToCart={this.handleAddToCart}/>}/>
-                        <Route path="/browse" exact render={(props) => <Browse {...props} handleAddToCart={this.handleAddToCart}/>}/>
-                        <Route path="/cart" exact render={(props) => <Cart {...props} handleUpdateCart={this.handleUpdateCart} handleAddToCart={this.handleAddToCart} customer={this.state.customer} cart={this.state.cart}/>}/>
-                    </div>
-                </BrowserRouter>
-            </div>
-        );
+    let cust = JSON.parse(sessionStorage.getItem("customer"));
+    if (!isEmpty(cust)) {
+      this.setState({customer: cust}, function () {
+        console.log(this.state);
+      });
     }
+  }
+
+  render() {
+    return (
+      <div>
+        <title>Fabflix React</title>
+        <BrowserRouter>
+          <div>
+            <Menu inverted fluid widths={5}>
+              <Menu.Item
+                as={Link}
+                to={'/'}
+                name='top-charts'
+                header
+              >
+                Top Twenty
+              </Menu.Item>
+              <Menu.Item
+                as={Link}
+                to={'/search'}
+                name='search'
+                header
+              >
+                Search
+              </Menu.Item>
+              <Menu.Item
+                as={Link}
+                to={{
+                  pathname: '/browse',
+                  state: {genre: "", reload: "no"}
+                }}
+                name='browse'
+                header
+              >
+                Browse
+              </Menu.Item>
+              <Menu.Item
+                as={Link}
+                to={'/cart'}
+                name='cart'
+                header
+              >
+                Checkout
+              </Menu.Item>
+              <Menu.Item
+                as={Link}
+                to={'/emplogin'}
+                name='emplogin'
+                header
+              >
+                Employee Login
+              </Menu.Item>
+            </Menu>
+            <Route path="/" exact render={(props) => <Movies {...props} handleAddToCart={this.handleAddToCart}/>}/>
+            <Route path="/star" exact render={(props) => <Star {...props} handleAddToCart={this.handleAddToCart}/>}/>
+            <Route path="/movie" exact render={(props) => <Film {...props} handleAddToCart={this.handleAddToCart}/>}/>
+            <Route path="/login" exact render={(props) => <Login {...props} getCust={this.getCust}/>}/>
+            <Route path="/emplogin" exact render={(props) => <EmployeeLogin {...props} />}/>
+            <Route path="/search" exact
+                   render={(props) => <Search {...props} handleAddToCart={this.handleAddToCart}/>}/>
+            <Route path="/browse" exact
+                   render={(props) => <Browse {...props} handleAddToCart={this.handleAddToCart}/>}/>
+            <Route path="/cart" exact render={(props) => <Cart {...props} handleUpdateCart={this.handleUpdateCart}
+                                                               handleAddToCart={this.handleAddToCart}
+                                                               customer={this.state.customer}
+                                                               cart={this.state.cart}/>}/>
+          </div>
+        </BrowserRouter>
+      </div>
+    );
+  }
 }
 
 export default App;
