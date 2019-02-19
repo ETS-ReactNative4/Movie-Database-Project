@@ -57,12 +57,6 @@ public class Login extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Helper.corsFix(response, request);
-        PrintWriter ret = response.getWriter();
-        if(!Helper.isLoggedIn(request,response)){
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        }
-        ret.println();
-        ret.flush();
+        EmployeeLogin.CheckLogin(request, response);
     }
 }
