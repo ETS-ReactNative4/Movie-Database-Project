@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import './App.css';
 import {BrowserRouter, Link, Route} from 'react-router-dom';
 import {Menu} from "semantic-ui-react";
 import Movies from "./Movies/Movies.js";
@@ -64,7 +63,6 @@ class App extends Component {
   render() {
     return (
       <div>
-        <title>Fabflix React</title>
         <BrowserRouter>
           <div>
             {this.state.is_employee ?

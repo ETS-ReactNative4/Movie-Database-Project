@@ -24,9 +24,46 @@ public class Helper {
             stars.put(star);
         }
     }
+
     static Connection connection() throws SQLException {
         // create database connection
         return DriverManager.getConnection(loginUrl, loginUser, loginPasswd);
+    }
+    static JSONObject getDatabaseSchema(Connection con) throws SQLException {
+        JSONObject dtypes = new JSONObject();
+
+        dtypes.put("12", "varchar");
+        dtypes.put("4", "integer");
+        dtypes.put("91", "date");
+        dtypes.put("7", "float");
+        dtypes.put("92", "time");
+        dtypes.put("93", "timestamp");
+
+        DatabaseMetaData metadata = con.getMetaData();
+        ResultSet tables = metadata.getTables(null, null, null, new String[]{"TABLE"});
+        JSONObject database_structure = new JSONObject();
+        while(tables.next()){
+            String table = tables.getString("TABLE_NAME");
+            JSONObject cols = new JSONObject();
+            ResultSet columns = metadata.getColumns(null,null, table, null);
+
+            while(columns.next()) {
+                String colname = columns.getString("COLUMN_NAME");
+                String colsize = columns.getString("COLUMN_SIZE");
+                StringBuilder typebuilder = new StringBuilder();
+                String datatype = columns.getString("DATA_TYPE");
+                if(datatype.equals("12") || datatype.equals("4")){
+                    typebuilder.append(dtypes.getString(datatype)).append(": ").append(colsize);
+                }
+                else{
+                    typebuilder.append(dtypes.getString(datatype));
+                }
+                cols.put(colname, typebuilder.toString());
+            }
+            database_structure.put(table, cols);
+        }
+        System.out.println(database_structure);
+        return database_structure;
     }
     static ResultSet getBrowseMovies(Connection con, String genre, String letter, String offset,
                                      String limit, String sort, String order, SearchMovies.NumRecords numRecords) throws SQLException {
