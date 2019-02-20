@@ -87,7 +87,7 @@ public class TextParsing
             Integer int_id = Integer.parseInt(id_num_as_string);
 
             int_id += 1;
-            id = "pl" + Integer.toString(int_id);
+            id = "tt" + Integer.toString(int_id);
 
 
             Integer batch_size = 50;
@@ -118,7 +118,7 @@ public class TextParsing
 
                 // increment id
                 int_id += 1;
-                id = "pl" + Integer.toString(int_id);
+                id = "tt" + Integer.toString(int_id);
 
                 System.out.println(pstate.toString());
 
@@ -159,7 +159,7 @@ public class TextParsing
             String star_id_num_as_string = star_id.substring(2, id.length());
             Integer star_int_id = Integer.parseInt(star_id_num_as_string);
             star_int_id += 1;
-            star_id = "kl" + Integer.toString(int_id);
+            star_id = "nm" + Integer.toString(int_id);
 
             Integer star_count = 0;
 
@@ -199,7 +199,7 @@ public class TextParsing
 
                     // inc id
                     star_int_id += 1;
-                    star_id = "kl" + Integer.toString(star_int_id);
+                    star_id = "nm" + Integer.toString(star_int_id);
 
                     if (star_count >= 100)
                     {
