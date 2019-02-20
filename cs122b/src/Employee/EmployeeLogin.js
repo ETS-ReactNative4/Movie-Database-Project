@@ -13,7 +13,7 @@ class EmployeeLogin extends Login{
         if (res.status === 403) {
           console.log("Invalid session");
         } else {
-          console.log("Logged in");
+          console.log(this.props);
           if(isEmpty(this.props.employee)){
             console.log("...but not as employee")
             this.setState({valid: false});
@@ -29,7 +29,6 @@ class EmployeeLogin extends Login{
     )
   }
   getRetVal() {
-    console.log("Going to browse");
     return (
       <Redirect to={"/employee"}/>
     );

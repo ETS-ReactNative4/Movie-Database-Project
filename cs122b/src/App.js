@@ -14,7 +14,7 @@ import EmployeeLogin from "./Employee/EmployeeLogin";
 import EmployeeDashboard from "./Employee/EmployeeDashboard";
 
 class App extends Component {
-  state = {cart: {}, customer: {}, employee: {}};
+  state = {cart: {}, customer: {}, employee: {}, is_employee: false};
 
   constructor() {
     super();
@@ -39,7 +39,7 @@ class App extends Component {
     this.setState({cart: carty});
   };
   getEmp(emp){
-    this.setState({customer: emp});
+    this.setState({employee: emp, is_employee: true});
     sessionStorage.setItem("employee", JSON.stringify(emp));
   }
 
@@ -67,51 +67,64 @@ class App extends Component {
         <title>Fabflix React</title>
         <BrowserRouter>
           <div>
-            <Menu inverted fluid widths={5}>
-              <Menu.Item
-                as={Link}
-                to={'/'}
-                name='top-charts'
-                header
-              >
-                Top Twenty
-              </Menu.Item>
-              <Menu.Item
-                as={Link}
-                to={'/search'}
-                name='search'
-                header
-              >
-                Search
-              </Menu.Item>
-              <Menu.Item
-                as={Link}
-                to={{
-                  pathname: '/browse',
-                  state: {genre: "", reload: "no"}
-                }}
-                name='browse'
-                header
-              >
-                Browse
-              </Menu.Item>
-              <Menu.Item
-                as={Link}
-                to={'/cart'}
-                name='cart'
-                header
-              >
-                Checkout
-              </Menu.Item>
-              <Menu.Item
-                as={Link}
-                to={'/emplogin'}
-                name='emplogin'
-                header
-              >
-                Employee Login
-              </Menu.Item>
-            </Menu>
+            {this.state.is_employee ?
+              <Menu inverted fluid widths={1}>
+                <Menu.Item
+                  as={Link}
+                  to={'/emplogin'}
+                  name='emplogin'
+                  header
+                >
+                  Employee Login
+                </Menu.Item>
+              </Menu>
+              :
+              <Menu inverted fluid widths={5}>
+                <Menu.Item
+                  as={Link}
+                  to={'/'}
+                  name='top-charts'
+                  header
+                >
+                  Top Twenty
+                </Menu.Item>
+                <Menu.Item
+                  as={Link}
+                  to={'/search'}
+                  name='search'
+                  header
+                >
+                  Search
+                </Menu.Item>
+                <Menu.Item
+                  as={Link}
+                  to={{
+                    pathname: '/browse',
+                    state: {genre: "", reload: "no"}
+                  }}
+                  name='browse'
+                  header
+                >
+                  Browse
+                </Menu.Item>
+                <Menu.Item
+                  as={Link}
+                  to={'/cart'}
+                  name='cart'
+                  header
+                >
+                  Checkout
+                </Menu.Item>
+                <Menu.Item
+                  as={Link}
+                  to={'/emplogin'}
+                  name='emplogin'
+                  header
+                >
+                  Employee Login
+                </Menu.Item>
+              </Menu>
+            }
             <Route path="/" exact render={(props) => <Movies {...props} handleAddToCart={this.handleAddToCart}/>}/>
             <Route path="/star" exact render={(props) => <Star {...props} handleAddToCart={this.handleAddToCart}/>}/>
             <Route path="/movie" exact render={(props) => <Film {...props} handleAddToCart={this.handleAddToCart}/>}/>

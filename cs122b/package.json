@@ -8,6 +8,7 @@
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
     "react-google-recaptcha": "^1.0.5",
+    "react-json-tree": "^0.11.2",
     "react-request": "^3.1.2",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
