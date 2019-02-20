@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Button, Container, Form, Grid, Header, Icon, Segment} from "semantic-ui-react";
+import {Button, Container, Form, Grid, Header, Icon, Message, Segment} from "semantic-ui-react";
 import MyLoader from "../MyLoader/MyLoader";
 import JSONTree from "react-json-tree";
 
@@ -30,14 +30,16 @@ class EmployeeDashboard extends Component {
     loading: true,
     formData: {
       title: '',
-      year: '',
+      year: '0',
       director: '',
       star: '',
       genre: '',
       starname: '',
-      stardob: '',
+      stardob: '0',
       genrename: ''
-    }
+    },
+    has_message: false,
+    message: null
   };
 
   constructor() {
@@ -61,25 +63,55 @@ class EmployeeDashboard extends Component {
   componentDidMount() {
     this.getSchemaDatabase();
   }
-
   handleInputChange(e) {
     let formData = Object.assign({}, this.state.formData);
     formData[e.target.name] = e.target.value;
     this.setState({formData})
   };
-
   handleMovie = event => {
     event.preventDefault();
-    console.log(this.state.formData);
+    fetch('http://' + window.location.hostname + ':8080/cs122b/employee?title='+this.state.formData.title+
+      '&director='+this.state.formData.director+'&year='+this.state.formData.year+'&star='+
+      this.state.formData.star+"&genre="+this.state.formData.genre, {
+      method: 'GET',
+      credentials: 'include'
+    }).then(
+      (res) => res.json()
+    ).then(
+      data => {
+        this.setState({message: data["message"], has_message: true});
+      }
+    )
   };
   handleStar = event => {
     event.preventDefault();
-    console.log(this.state.formData);
+    fetch('http://' + window.location.hostname + ':8080/cs122b/employee?starname='+this.state.formData.starname+
+      "&stardob="+this.state.formData.stardob, {
+      method: 'get',
+      credentials: 'include'
+    }).then(
+      (res) => res.json()
+    ).then(
+      data => {
+        console.log(data);
+        this.setState({message: data["message"], has_message: true});
+      }
+    )
   };
   handleGenre = event => {
     event.preventDefault();
-    console.log(this.state.formData);
-  }
+    fetch('http://' + window.location.hostname + ':8080/cs122b/employee?genrename='+this.state.formData.genrename, {
+      method: 'get',
+      credentials: 'include'
+    }).then(
+      (res) => res.json()
+    ).then(
+      data => {
+        console.log(data);
+        this.setState({message: data["message"], has_message: true});
+      }
+    )
+  };
   render() {
     return (
       <Container>
@@ -91,6 +123,11 @@ class EmployeeDashboard extends Component {
                 <JSONTree data={this.state.schema} theme={theme}/>
               </Grid.Column>
               <Grid.Column width={11}>
+                {this.state.has_message ?
+                  <Message success header={"Result of Inserts"}
+                           list={this.state.message}/>:
+                  null
+                }
                 <Segment>
                   <Form onSubmit={this.handleMovie}>
                     <Header as={'h1'}>
