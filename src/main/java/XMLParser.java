@@ -151,8 +151,12 @@ public class XMLParser {
                             System.out.println("Title exception at film element " + j + ": " + e.toString());
                         }
                         try {
+                            Integer yearint = Integer.parseInt(getTextValue(fl, "year"));
                             year = getTextValue(fl, "year");
-                        } catch (Exception e) {
+                        }catch (NumberFormatException e){
+                            year = "0";
+                        }
+                        catch (Exception e) {
                             System.out.println("Year exception at film element " + j + ": " + e.toString());
                         }
                         NodeList genres = ((Element) films.item(j)).getElementsByTagName("cat");

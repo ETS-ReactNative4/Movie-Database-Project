@@ -1,20 +1,20 @@
-public class Movie {
+public class Film {
     private String director;
     private String title;
     private String year;
     private String[] genres;
     private String[] stars;
-    private String movie_id;
+    private String movieId;
 
-    public Movie(String director, String title, String year, String[] genres) {
+    public Film(String director, String title, String year, String[] genres) {
         this.director = director;
         this.title = title;
         this.year = year;
         this.genres = genres;
         this.stars = new String[0];
-        this.movie_id = "";
+        this.movieId = "";
     }
-    public Movie(){
+    public Film(){
     }
 
     public String getTitle() {
@@ -81,11 +81,13 @@ public class Movie {
         this.stars = stars;
     }
 
-    public String getMovie_id() {
-        return movie_id;
+    public void setMovieId(String movieId)
+    {
+        this.movieId = movieId;
     }
 
-    public void setMovie_id(String movie_id) {
-        this.movie_id = movie_id;
+    public String getMovieId()
+    {
+        return this.movieId;
     }
 }
