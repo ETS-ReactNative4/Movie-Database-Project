@@ -65,6 +65,58 @@ public class Helper {
         System.out.println(database_structure);
         return database_structure;
     }
+    static JSONObject addGenre(Connection con, String genre_name) throws SQLException {
+        JSONArray message = new JSONArray();
+        String query = "{call add_genre(?)}";
+        CallableStatement statement = con.prepareCall(query);
+        statement.setString(1, genre_name);
+        if(statement.execute()){
+            ResultSet resultSet = statement.getResultSet();
+            while(resultSet.next()){
+                message.put(resultSet.getString("message"));
+            }
+        }
+        JSONObject retval = new JSONObject();
+        retval.put("message", message);
+        return retval;
+    }
+    static JSONObject addStar(Connection con, String star_name, int star_dob) throws SQLException {
+        JSONArray message = new JSONArray();
+        String query = "{call add_star(?,?)}";
+        CallableStatement statement = con.prepareCall(query);
+        statement.setString(1, star_name);
+        statement.setInt(2, star_dob);
+        if(statement.execute()){
+            ResultSet resultSet = statement.getResultSet();
+            while(resultSet.next()){
+                message.put(resultSet.getString("message"));
+                System.out.println(resultSet.getString("message"));
+            }
+        }
+        JSONObject retval = new JSONObject();
+        retval.put("message", message);
+        return retval;
+    }
+    static JSONObject addMovie(Connection con, String title, String director, int year, String star, String genre) throws SQLException {
+        JSONArray message = new JSONArray();
+        String query = "{call add_movie(?,?,?,?,?)}";
+        CallableStatement statement = con.prepareCall(query);
+        statement.setString(1, title);
+        statement.setInt(2, year);
+        statement.setString(3, director);
+        statement.setString(4, star);
+        statement.setString(5, genre);
+
+        if(statement.execute()){
+            ResultSet resultSet = statement.getResultSet();
+            while(resultSet.next()){
+                message.put(resultSet.getString("message"));
+            }
+        }
+        JSONObject retval = new JSONObject();
+        retval.put("message", message);
+        return retval;
+    }
     static ResultSet getBrowseMovies(Connection con, String genre, String letter, String offset,
                                      String limit, String sort, String order, SearchMovies.NumRecords numRecords) throws SQLException {
         PreparedStatement statement = null;
