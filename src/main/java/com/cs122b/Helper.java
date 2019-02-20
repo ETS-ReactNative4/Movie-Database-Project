@@ -80,6 +80,16 @@ public class Helper {
         retval.put("message", message);
         return retval;
     }
+    static JSONArray getGenres(Connection con) throws SQLException {
+        JSONArray genres = new JSONArray();
+        String query = "select name from genres";
+        Statement statement = con.createStatement();
+        ResultSet resultSet = statement.executeQuery(query);
+        while(resultSet.next()){
+            genres.put(resultSet.getString("name"));
+        }
+        return genres;
+    }
     static JSONObject addStar(Connection con, String star_name, int star_dob) throws SQLException {
         JSONArray message = new JSONArray();
         String query = "{call add_star(?,?)}";

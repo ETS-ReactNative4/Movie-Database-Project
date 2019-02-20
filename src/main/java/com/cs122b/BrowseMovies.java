@@ -22,7 +22,21 @@ public class BrowseMovies extends HttpServlet {
         resp.setStatus(HttpServletResponse.SC_OK);
     }
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+        response.setContentType("application/json");
+        Helper.corsFix(response,request);
+        PrintWriter ret = response.getWriter();
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
+            Connection connection = Helper.connection();
+            ret.println(Helper.getGenres(connection));
+            ret.flush();
+        }
+        catch (Exception e){
+            JSONObject error = new JSONObject();
+            error.put("error",e);
+            ret.println(error);
+            ret.flush();
+        }
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
