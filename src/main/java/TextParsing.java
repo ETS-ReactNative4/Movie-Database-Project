@@ -65,9 +65,9 @@ public class TextParsing
 
         try
         {
-            String loginUser = "root";
-            String loginPasswd = "Green254";
-            String loginUrl = "jdbc:mysql://localhost:3306/MovieNight";
+            String loginUser = "username";
+            String loginPasswd = "password";
+            String loginUrl = "jdbc:mysql://localhost:3306/moviedb";
 
             Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
             Connection connection = DriverManager.getConnection(loginUrl, loginUser, loginPasswd);
@@ -159,7 +159,7 @@ public class TextParsing
             String star_id_num_as_string = star_id.substring(2, id.length());
             Integer star_int_id = Integer.parseInt(star_id_num_as_string);
             star_int_id += 1;
-            star_id = "nm" + Integer.toString(int_id);
+            star_id = "mn" + Integer.toString(int_id);
 
             Integer star_count = 0;
 
@@ -199,7 +199,7 @@ public class TextParsing
 
                     // inc id
                     star_int_id += 1;
-                    star_id = "nm" + Integer.toString(star_int_id);
+                    star_id = "mn" + Integer.toString(star_int_id);
 
                     if (star_count >= 100)
                     {
@@ -213,18 +213,93 @@ public class TextParsing
 
                 }
 
-                if (star_count % 100 != 0)
-                {
-                    System.out.println("EXECUTING LEFT OVER BATCH");
-                    star_pstate.executeBatch();
-                    star_rel_movie.executeBatch();
-                    connection.commit();
-                }
+
+            }
+
+            if (star_count % 100 != 0)
+            {
+                System.out.println("EXECUTING LEFT OVER BATCH");
+                star_pstate.executeBatch();
+                star_rel_movie.executeBatch();
+                connection.commit();
             }
 
 
 
+// insert genre
+            // id and name
+            String genre_query1 = "INSERT INTO genres(name) VALUES (?)";
 
+            // genre_id movie_id
+            String genre_query2 = "INSERT INTO genres_in_movies VALUES (?, ?)";
+
+            PreparedStatement genre_pstate = connection.prepareStatement(genre_query1);
+            PreparedStatement genre_in_movies_pstate = connection.prepareStatement(genre_query2);
+
+            // genre id
+            // get latest id and add 1 to it
+            String genre_id_q = "SELECT * FROM genres WHERE id = (SELECT max(id) FROM genres) LIMIT 1";
+            Statement genre_id_statement = connection.createStatement();
+            ResultSet genre_id_rs = genre_id_statement.executeQuery(genre_id_q);
+
+            genre_id_rs.next();
+
+            int genre_id = genre_id_rs.getInt("id");
+
+            // inc genre id
+            genre_id += 1;
+
+            int genre_count = 0;
+
+            for (Film movie : parser.MovieMap.values())
+            {
+                genre_count += 1;
+
+                // cycle through genre array in the movie
+                String[] genresAr = movie.getGenres();
+
+                // cycle through genres for movie
+                for (int index = 0; index < genresAr.length; index++)
+                {
+                    // add params to genre insert
+                    //genre_pstate.setInt(1, genre_id); auto insert
+
+                    // name
+                    genre_pstate.setString(1, genresAr[index]);
+
+
+                    // add params to genre in movie
+                    genre_in_movies_pstate.setInt(1, genre_id);
+                    genre_in_movies_pstate.setString(2, movie.getMovieId());
+
+                    // add to batch
+                    genre_pstate.addBatch();
+                    genre_in_movies_pstate.addBatch();
+
+                    System.out.println(genre_pstate.toString());
+                    System.out.println(genre_in_movies_pstate.toString());
+
+                    // inc id
+                    genre_id += 1;
+
+                    if (genre_count >= 100) {
+                        System.out.println("EXECUTING GENRE BATCH");
+                        genre_count = 0;
+                        genre_pstate.executeBatch();
+                        genre_in_movies_pstate.executeBatch();
+                        connection.commit();
+                    }
+                }
+
+                if (genre_count % 100 != 0)
+                {
+                    System.out.println("EXECUTING LEFT OVER GENRE BATCH");
+                    genre_pstate.executeBatch();
+                    genre_in_movies_pstate.executeBatch();
+                    connection.commit();
+                }
+
+            }
 
             try
             {
