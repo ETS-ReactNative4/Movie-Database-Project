@@ -4,31 +4,6 @@ import {Redirect} from "react-router";
 import MyLoader from "../MyLoader/MyLoader";
 import {Button, Container, Form, Pagination, Segment} from "semantic-ui-react";
 
-const genreoptions = [
-  {key: '1', text: 'Action', value: 'Action'},
-  {key: '2', text: 'Adult', value: 'Adult'},
-  {key: '3', text: 'Adventure', value: 'Adventure'},
-  {key: '4', text: 'Animation', value: 'Animation'},
-  {key: '5', text: 'Biography', value: 'Biography'},
-  {key: '6', text: 'Comedy', value: 'Comedy'},
-  {key: '7', text: 'Crime', value: 'Crime'},
-  {key: '8', text: 'Documentary', value: 'Documentary'},
-  {key: '9', text: 'Drama', value: 'Drama'},
-  {key: '10', text: 'Family', value: 'Family'},
-  {key: '11', text: 'Fantasy', value: 'Fantasy'},
-  {key: '12', text: 'History', value: 'History'},
-  {key: '13', text: 'Horror', value: 'Horror'},
-  {key: '14', text: 'Music', value: 'Music'},
-  {key: '15', text: 'Musical', value: 'Musical'},
-  {key: '16', text: 'Mystery', value: 'Mystery'},
-  {key: '17', text: 'Reality-TV', value: 'Reality-TV'},
-  {key: '18', text: 'Romance', value: 'Romance'},
-  {key: '19', text: 'Sci-Fi', value: 'Sci-Fi'},
-  {key: '20', text: 'Sport', value: 'Sport'},
-  {key: '21', text: 'Thriller', value: 'Thriller'},
-  {key: '22', text: 'War', value: 'War'},
-  {key: '23', text: 'Western', value: 'Western'},
-];
 const letteroptions = [
   {key: '1', text: 'a', value: 'a'},
   {key: '2', text: 'b', value: 'b'},
@@ -139,10 +114,10 @@ class Browse extends MovieList {
   }
 
   handleGenreChange = (e, data) => {
-    this.setState({letter: data.value, genre: ''});
+    this.setState({genre: data.value, letter: ''});
   };
   handleLetterChange = (e, data) => {
-    this.setState({genre: data.value, letter: ''});
+    this.setState({letter: data.value, genre: ''});
   };
   handleOrderChange = (e, data) => {
     this.setState({order: data.value});

@@ -37,7 +37,8 @@ class App extends Component {
   handleUpdateCart = (carty) => {
     this.setState({cart: carty});
   };
-  getEmp(emp){
+
+  getEmp(emp) {
     this.setState({employee: emp, is_employee: true});
     sessionStorage.setItem("employee", JSON.stringify(emp));
   }
@@ -63,7 +64,8 @@ class App extends Component {
   render() {
     return (
       <div>
-        <BrowserRouter>
+        <BrowserRouter basename={'/cs122b'}>
+        {/*<BrowserRouter>*/}
           <div>
             {this.state.is_employee ?
               <Menu inverted fluid widths={1}>
@@ -127,7 +129,8 @@ class App extends Component {
             <Route path="/star" exact render={(props) => <Star {...props} handleAddToCart={this.handleAddToCart}/>}/>
             <Route path="/movie" exact render={(props) => <Film {...props} handleAddToCart={this.handleAddToCart}/>}/>
             <Route path="/login" exact render={(props) => <Login {...props} getCust={this.getCust}/>}/>
-            <Route path="/emplogin" exact render={(props) => <EmployeeLogin {...props} getCust={this.getEmp} employee={this.state.employee}/>}/>
+            <Route path="/emplogin" exact render={(props) => <EmployeeLogin {...props} getCust={this.getEmp}
+                                                                            employee={this.state.employee}/>}/>
             <Route path="/employee" exact render={(props) => <EmployeeDashboard {...props}/>}/>
             <Route path="/search" exact
                    render={(props) => <Search {...props} handleAddToCart={this.handleAddToCart}/>}/>
