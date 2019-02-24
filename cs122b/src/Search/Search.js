@@ -44,7 +44,7 @@ class Search extends MovieList {
 
     getMovies() {
         this.setState({search: "loading"});
-        fetch('http://' + window.location.hostname + ':8080/cs122b/search?title=' + this.state.title +
+        fetch('https://' + window.location.hostname + ':8443/cs122b/search?title=' + this.state.title +
             '&year=' + this.state.year + '&director=' + this.state.director + '&name=' + this.state.name +
             '&limit=' + this.state.limit + '&offset=' + ((this.state.activePage - 1) * this.state.limit +
                 '&sort=' + this.state.sort + '&order=' + this.state.order), {

@@ -31,7 +31,7 @@ class Star extends Component {
         mounted: false
     };
     componentDidMount(){
-        fetch('http://'+window.location.hostname+':8080/cs122b/login', {
+        fetch('https://'+window.location.hostname+':8443/cs122b/login', {
             method: 'GET',
             credentials: 'include'
         }).then(
@@ -56,7 +56,7 @@ class Star extends Component {
         const query = queryString.parse(this.props.location.search);
         if(this.state.mounted && this.state.valid){
             return (
-                <Fetch url={'http://'+window.location.hostname+':8080/cs122b/star?id='+query.id} credentials={'include'}>
+                <Fetch url={'https://'+window.location.hostname+':8443/cs122b/star?id='+query.id} credentials={'include'}>
                     {({ fetching, failed, data }) => {
                         if (fetching) {
                             return(

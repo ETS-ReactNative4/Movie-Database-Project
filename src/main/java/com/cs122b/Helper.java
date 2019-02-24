@@ -342,7 +342,7 @@ public class Helper {
         return customer;
     }
     static void corsFix(HttpServletResponse resp, HttpServletRequest request) {
-        String domain = "http://";
+        String domain = request.getScheme()+"://";
         try {
             domain = domain+new URL(request.getRequestURL().toString()).getHost();
         } catch (MalformedURLException e) {

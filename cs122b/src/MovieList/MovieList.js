@@ -35,7 +35,7 @@ class MovieList extends Component {
     };
 
     componentDidMount() {
-        fetch('http://' + window.location.hostname + ':8080/cs122b/login', {
+        fetch('https://' + window.location.hostname + ':8443/cs122b/login', {
             method: 'GET',
             credentials: 'include'
         }).then(

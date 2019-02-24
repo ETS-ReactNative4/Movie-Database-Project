@@ -48,7 +48,7 @@ class EmployeeDashboard extends Component {
   }
 
   getSchemaDatabase() {
-    fetch('http://' + window.location.hostname + ':8080/cs122b/employee?schema=true', {
+    fetch('https://' + window.location.hostname + ':8443/cs122b/employee?schema=true', {
       method: 'GET',
       credentials: 'include'
     }).then(
@@ -70,7 +70,7 @@ class EmployeeDashboard extends Component {
   };
   handleMovie = event => {
     event.preventDefault();
-    fetch('http://' + window.location.hostname + ':8080/cs122b/employee?title='+this.state.formData.title+
+    fetch('https://' + window.location.hostname + ':8443/cs122b/employee?title='+this.state.formData.title+
       '&director='+this.state.formData.director+'&year='+this.state.formData.year+'&star='+
       this.state.formData.star+"&genre="+this.state.formData.genre, {
       method: 'GET',
@@ -85,7 +85,7 @@ class EmployeeDashboard extends Component {
   };
   handleStar = event => {
     event.preventDefault();
-    fetch('http://' + window.location.hostname + ':8080/cs122b/employee?starname='+this.state.formData.starname+
+    fetch('https://' + window.location.hostname + ':8443/cs122b/employee?starname='+this.state.formData.starname+
       "&stardob="+this.state.formData.stardob, {
       method: 'get',
       credentials: 'include'
@@ -100,7 +100,7 @@ class EmployeeDashboard extends Component {
   };
   handleGenre = event => {
     event.preventDefault();
-    fetch('http://' + window.location.hostname + ':8080/cs122b/employee?genrename='+this.state.formData.genrename, {
+    fetch('https://' + window.location.hostname + ':8443/cs122b/employee?genrename='+this.state.formData.genrename, {
       method: 'get',
       credentials: 'include'
     }).then(

@@ -5,7 +5,7 @@ import {isEmpty} from "../Cart/Cart";
 
 class EmployeeLogin extends Login{
   componentDidMount() {
-    fetch('http://' + window.location.hostname + ':8080/cs122b/employeelogin', {
+    fetch('https://' + window.location.hostname + ':8443/cs122b/employeelogin', {
       method: 'GET',
       credentials: 'include'
     }).then(
@@ -34,7 +34,7 @@ class EmployeeLogin extends Login{
     );
   }
   getSession(creds) {
-    fetch('http://' + window.location.hostname + ':8080/cs122b/employeelogin', {
+    fetch('https://' + window.location.hostname + ':8443/cs122b/employeelogin', {
       method: 'POST',
       headers: {
         "Content-Type": "application/json"

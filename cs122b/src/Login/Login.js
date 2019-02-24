@@ -21,7 +21,7 @@ class Login extends Component {
   };
 
   componentDidMount() {
-    fetch('http://' + window.location.hostname + ':8080/cs122b/login', {
+    fetch('https://' + window.location.hostname + ':8443/cs122b/login', {
       method: 'GET',
       credentials: 'include'
     }).then(
@@ -60,7 +60,7 @@ class Login extends Component {
   };
 
   getSession(creds) {
-    fetch('http://' + window.location.hostname + ':8080/cs122b/login', {
+    fetch('https://' + window.location.hostname + ':8443/cs122b/login', {
       method: 'POST',
       headers: {
         "Content-Type": "application/json"

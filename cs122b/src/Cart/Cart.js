@@ -115,7 +115,7 @@ class Cart extends Component {
                 this.setState({formData: form});
             }
         });
-        fetch('http://' + window.location.hostname + ':8080/cs122b/login', {
+        fetch('https://' + window.location.hostname + ':8443/cs122b/login', {
             method: 'GET',
             credentials: 'include'
         }).then(
@@ -187,7 +187,7 @@ class Cart extends Component {
         if (correct) {
             let crt = {...this.state.carty};
             crt['customerId'] = this.state.customer["id"];
-            fetch('http://' + window.location.hostname + ':8080/cs122b/sale', {
+            fetch('https://' + window.location.hostname + ':8443/cs122b/sale', {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json"

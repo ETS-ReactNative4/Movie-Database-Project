@@ -2,7 +2,7 @@
   "name": "cs122b",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://localhost:8080/cs122b",
+  "homepage": "https://localhost:8443/cs122b",
   "dependencies": {
     "axios": "^0.18.0",
     "query-string": "^6.2.0",

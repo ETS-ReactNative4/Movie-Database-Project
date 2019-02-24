@@ -58,7 +58,7 @@ class Browse extends MovieList {
 
   getMovies() {
     this.setState({search: "loading"});
-    fetch('http://' + window.location.hostname + ':8080/cs122b/browse?genre=' + this.state.genre +
+    fetch('https://' + window.location.hostname + ':8443/cs122b/browse?genre=' + this.state.genre +
       '&letter=' + this.state.letter + '&limit=' + this.state.limit + '&offset=' + ((this.state.activePage - 1) * this.state.limit) +
       '&sort=' + this.state.sort + '&order=' + this.state.order, {
       method: 'GET',
@@ -80,7 +80,7 @@ class Browse extends MovieList {
 
   componentDidMount() {
     super.componentDidMount();
-    fetch('http://' + window.location.hostname + ':8080/cs122b/browse'
+    fetch('https://' + window.location.hostname + ':8443/cs122b/browse'
       , {
       method: 'post',
       credentials: 'include'

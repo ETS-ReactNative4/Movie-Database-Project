@@ -51,7 +51,7 @@ class Movies extends Component {
         mounted: false
     };
     componentDidMount(){
-        fetch('http://'+window.location.hostname+':8080/cs122b/login', {
+        fetch('https://'+window.location.hostname+':8443/cs122b/login', {
             method: 'GET',
             credentials: 'include'
         }).then(
@@ -75,7 +75,7 @@ class Movies extends Component {
     render(){
         if(this.state.mounted && this.state.valid){
             return (
-                <Fetch url={'http://'+window.location.hostname+':8080/cs122b/top20'} credentials={'include'}>
+                <Fetch url={'https://'+window.location.hostname+':8443/cs122b/top20'} credentials={'include'}>
                     {({ fetching, failed, data }) => {
                         if (fetching) {
                             return(
