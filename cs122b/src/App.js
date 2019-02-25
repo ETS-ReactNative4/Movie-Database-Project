@@ -11,6 +11,7 @@ import Browse from "./Browse/Browse";
 import Cart, {isEmpty} from "./Cart/Cart";
 import EmployeeLogin from "./Employee/EmployeeLogin";
 import EmployeeDashboard from "./Employee/EmployeeDashboard";
+import FullTextSearch from "./FullTextSearch/FullTextSearch";
 
 class App extends Component {
   state = {cart: {}, customer: {}, employee: {}, is_employee: false};
@@ -79,7 +80,7 @@ class App extends Component {
                 </Menu.Item>
               </Menu>
               :
-              <Menu inverted fluid widths={5}>
+              <Menu inverted fluid widths={6}>
                 <Menu.Item
                   as={Link}
                   to={'/'}
@@ -123,6 +124,9 @@ class App extends Component {
                 >
                   Employee Login
                 </Menu.Item>
+                <Menu.Item
+                as={FullTextSearch}
+                />
               </Menu>
             }
             <Route path="/" exact render={(props) => <Movies {...props} handleAddToCart={this.handleAddToCart}/>}/>
