@@ -28,23 +28,28 @@ const searchDebounced = AwesomeDebouncePromise(search, 400);
 class FullTextSearch extends Component {
   state = {value: '', redir: false, data: []};
 
+  constructor(){
+    super();
+    this.unsetRedir = this.unsetRedir.bind(this);
+  }
   componentWillMount() {
     this.resetComponent()
   }
 
+  unsetRedir = () => {
+    this.setState({redir: false});
+  };
   resetComponent = () => this.setState({isLoading: false, results: []});
-  handleResultSelect = (e, {result}) => this.setState({value: result.title});
+  handleResultSelect = (e, {result}) => this.setState({value: result.title, redir: true},function(){this.setState({redir: false})});
   handleSearchChange = async (e, {value}) => {
     this.setState({isLoading: true, value});
     if (this.state.value.length < 2) return this.resetComponent();
-    const result = await search(value);//await searchDebounced(value);
-    setTimeout(() => {
-      this.setState({
-        isLoading: false,
-        results: result['movies'],
-        data: result['data']
-      });
-    }, 400);
+    const result = await searchDebounced(value);
+    this.setState({
+      isLoading: false,
+      results: result['movies'],
+      data: result['data']
+    });
   };
 
   render() {
@@ -54,7 +59,7 @@ class FullTextSearch extends Component {
           this.state.redir ?
             <Redirect to={{
               pathname: '/fullresults',
-              state: {data: this.state.results}
+              state: {data: this.state.data, reload: "yes"}
             }}/>
             :
             null

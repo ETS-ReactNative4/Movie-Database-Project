@@ -4,7 +4,7 @@
   "private": true,
   "homepage": "https://localhost:8443/cs122b",
   "dependencies": {
-    "awesome-debounce-promise": "^2.0.1",
+    "awesome-debounce-promise": "^2.1.0",
     "axios": "^0.18.0",
     "lodash": "^4.17.11",
     "query-string": "^6.2.0",

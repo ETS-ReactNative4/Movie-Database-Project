@@ -12,6 +12,7 @@ import Cart, {isEmpty} from "./Cart/Cart";
 import EmployeeLogin from "./Employee/EmployeeLogin";
 import EmployeeDashboard from "./Employee/EmployeeDashboard";
 import FullTextSearch from "./FullTextSearch/FullTextSearch";
+import FullTextResults from "./FullTextSearch/FullTextResults";
 
 class App extends Component {
   state = {cart: {}, customer: {}, employee: {}, is_employee: false};
@@ -136,6 +137,7 @@ class App extends Component {
             <Route path="/emplogin" exact render={(props) => <EmployeeLogin {...props} getCust={this.getEmp}
                                                                             employee={this.state.employee}/>}/>
             <Route path="/employee" exact render={(props) => <EmployeeDashboard {...props}/>}/>
+            <Route path={"/fullresults"} exact render={(props) => <FullTextResults {...props} handleAddToCart={this.handleAddToCart}/>}/>
             <Route path="/search" exact
                    render={(props) => <Search {...props} handleAddToCart={this.handleAddToCart}/>}/>
             <Route path="/browse" exact
