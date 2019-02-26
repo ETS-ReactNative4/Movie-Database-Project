@@ -53,7 +53,7 @@ class FullTextSearch extends Component {
         {
           this.state.redir ?
             <Redirect to={{
-              pathname: '/search',
+              pathname: '/fullresults',
               state: {data: this.state.results}
             }}/>
             :
