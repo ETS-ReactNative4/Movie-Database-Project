@@ -234,7 +234,7 @@ public class Helper {
     numRecords.num = res.getInt("count");
     statement = con.createStatement();
     System.out.println(query);
-    return statement.executeQuery(query);
+    return statement.executeQuery(query+" LIMIT 10");
   }
 
   static ResultSet getMovies(Connection con, String title, String year, String director, String star,

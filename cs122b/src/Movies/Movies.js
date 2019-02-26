@@ -48,7 +48,8 @@ class Movies extends Component {
     state = {
         activeIndex: 0,
         valid: false,
-        mounted: false
+        mounted: false,
+        data: []
     };
     componentDidMount(){
         fetch('https://'+window.location.hostname+':8443/cs122b/login', {

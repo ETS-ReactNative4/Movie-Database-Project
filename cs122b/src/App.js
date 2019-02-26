@@ -80,7 +80,7 @@ class App extends Component {
                 </Menu.Item>
               </Menu>
               :
-              <Menu inverted fluid widths={6}>
+              <Menu inverted widths={6}>
                 <Menu.Item
                   as={Link}
                   to={'/'}
