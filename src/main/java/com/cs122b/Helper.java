@@ -216,7 +216,7 @@ public class Helper {
     return records;
   }
 
-  static ResultSet getFullTextResults(Connection con, String queryString, SearchMovies.NumRecords numRecords) throws SQLException {
+  static ResultSet getFullTextResults(Connection con, String queryString, int offset, SearchMovies.NumRecords numRecords) throws SQLException {
     String[] tokens = queryString.split(" ");
     StringBuilder query_builder = new StringBuilder();
     for (String tok :
@@ -234,7 +234,7 @@ public class Helper {
     numRecords.num = res.getInt("count");
     statement = con.createStatement();
     System.out.println(query);
-    return statement.executeQuery(query+" LIMIT 10");
+    return statement.executeQuery(query+" LIMIT "+offset+", 10");
   }
 
   static ResultSet getMovies(Connection con, String title, String year, String director, String star,

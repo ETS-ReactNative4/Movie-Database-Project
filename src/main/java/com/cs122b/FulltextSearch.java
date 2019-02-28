@@ -33,10 +33,11 @@ public class FulltextSearch extends HttpServlet {
       Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
       Connection connection = Helper.connection();
       SearchMovies.NumRecords numRecords = new SearchMovies.NumRecords();
+      int offset = Integer.parseInt(request.getParameter("offset"));
       String queryString = request.getParameter("query");
 
       if(queryString!=null){
-        ResultSet resultSet = Helper.getFullTextResults(connection, queryString, numRecords);
+        ResultSet resultSet = Helper.getFullTextResults(connection, queryString, offset,numRecords);
         JSONObject encapsulator = new JSONObject();
         encapsulator.put("numRecords", numRecords.num);
         JSONArray relatedMovies = new JSONArray();
