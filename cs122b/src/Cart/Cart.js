@@ -137,7 +137,6 @@ class Cart extends Component {
         crt[item.id]["quantity"] += 1;
         this.setState({carty: crt}, function () {
             this.props.handleUpdateCart(this.state.carty);
-            console.log(this.state.carty);
             sessionStorage.setItem("cart", JSON.stringify(this.state.carty));
         });
     };
@@ -149,7 +148,6 @@ class Cart extends Component {
         }
         this.setState({carty: crt}, function () {
             this.props.handleUpdateCart(this.state.carty);
-            console.log(this.state.carty);
             sessionStorage.setItem("cart", JSON.stringify(this.state.carty));
         });
     };

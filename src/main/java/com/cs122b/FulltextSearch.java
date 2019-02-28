@@ -33,7 +33,13 @@ public class FulltextSearch extends HttpServlet {
       Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
       Connection connection = Helper.connection();
       SearchMovies.NumRecords numRecords = new SearchMovies.NumRecords();
-      int offset = Integer.parseInt(request.getParameter("offset"));
+      int offset;
+      try{
+        offset = Integer.parseInt(request.getParameter("offset"));
+      }
+      catch (NumberFormatException E){
+        offset=0;
+      }
       String queryString = request.getParameter("query");
 
       if(queryString!=null){

@@ -9,6 +9,7 @@ class FullTextResults extends Movies {
   state = {
     activeIndex: 0,
     valid: false,
+    value: "",
     mounted: false,
     data: [],
     activePage: 1,
@@ -19,7 +20,7 @@ class FullTextResults extends Movies {
 
   getMovies() {
     this.setState({search: "loading"});
-    fetch('https://' + window.location.hostname + ':8443/cs122b/fullsearch?query=' + this.props.location.query +
+    fetch('https://' + window.location.hostname + ':8443/cs122b/fullsearch?query=' + this.state.value +
       '&offset=' + ((this.state.activePage - 1) * this.state.limit), {method: 'GET', credentials: 'include'}).then(
       (res) => res.json()
     ).then(
@@ -30,13 +31,25 @@ class FullTextResults extends Movies {
     )
   }
 
+  componentDidMount(props) {
+    super.componentDidMount();
+    this.setState({
+      data: this.props.location.state.data.movies,
+      total: this.props.location.state.data.numRecords,
+      value: this.props.location.state.value,
+      search: "received"
+    }, function () {
+      this.setState({pages: Math.ceil(this.state.total / this.state.limit)})
+    })
+  }
+
   componentWillReceiveProps(nextProps) {
-    if (nextProps.location.state.reload === "yes") {
+    if (nextProps.location.state.value !== this.state.value) {
       this.setState({
-        data: this.props.location.state.data.movies,
-        total: this.props.location.state.data.numRecords,
+        data: nextProps.location.state.data.movies,
+        total: nextProps.location.state.data.numRecords,
         search: "received"
-      },function(){
+      }, function () {
         this.setState({pages: Math.ceil(this.state.total / this.state.limit)})
       })
     }
@@ -47,14 +60,14 @@ class FullTextResults extends Movies {
       return (
         <Container>
           <Container textAlign={"center"} style={{marginBottom: "3em"}}>
-          <Pagination
-            totalPages={this.state.pages}
-            activePage={this.state.activePage}
-            onPageChange={this.handlePaginationChange}
-            siblingRange={2}
-          />
+            <Pagination
+              totalPages={this.state.pages}
+              activePage={this.state.activePage}
+              onPageChange={this.handlePaginationChange}
+              siblingRange={2}
+            />
           </Container>
-          <SearchResults data={this.props.location.state.data['movies']} handleAddToCart={this.props.handleAddToCart}/>
+          <SearchResults data={this.state.data} handleAddToCart={this.props.handleAddToCart}/>
         </Container>
       );
     } else if (!this.state.valid && this.state.mounted) {

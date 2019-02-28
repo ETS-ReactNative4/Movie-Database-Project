@@ -233,7 +233,6 @@ public class Helper {
     res.next();
     numRecords.num = res.getInt("count");
     statement = con.createStatement();
-    System.out.println(query);
     return statement.executeQuery(query+" LIMIT "+offset+", 10");
   }
 
