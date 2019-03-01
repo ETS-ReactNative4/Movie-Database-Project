@@ -10,7 +10,6 @@ const search = value => fetch('https://' + window.location.hostname + ':8443/cs1
   (res) => res.json()
 ).then(
   data => {
-    console.log(data);
     let movies = [];
     Object.keys(data['movies']).forEach(function (key) {
       movies.push({
@@ -56,9 +55,10 @@ class FullTextSearch extends Component {
   };
   handleSearchChange = async (e, {value}) => {
     this.setState({isLoading: true, value});
-    if (value.length < 2) return this.resetComponent();
+    if (value.length < 3) return this.resetComponent();
     if(value in this.state.cache){
       console.log("Using cache");
+      console.log(this.state.cache[value]['movies']);
       setTimeout(() => {
         this.setState({
           isLoading: false,
@@ -73,6 +73,7 @@ class FullTextSearch extends Component {
       setTimeout(() => {
         let cache = {...this.state.cache};
         cache[value] = result;
+        console.log(result['movies']);
         this.setState({
           isLoading: false,
           results: result['movies'],
