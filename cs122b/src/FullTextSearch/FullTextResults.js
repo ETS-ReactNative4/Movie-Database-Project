@@ -16,6 +16,7 @@ class FullTextResults extends Movies {
     pages: 0,
     limit: 10
   };
+
   handlePaginationChange = (e, {activePage}) => this.setState({activePage}, this.getMovies);
 
   getMovies() {
@@ -24,10 +25,7 @@ class FullTextResults extends Movies {
       '&offset=' + ((this.state.activePage - 1) * this.state.limit), {method: 'GET', credentials: 'include'}).then(
       (res) => res.json()
     ).then(
-      data => this.setState({data: data.movies, total: data.numRecords, search: "received"},
-        function () {
-          this.setState({pages: Math.ceil(this.state.total / this.state.limit)})
-        })
+      data => this.setState({data: data.movies, search: "received"}, function(){console.log(this.state)})
     )
   }
 
@@ -48,6 +46,7 @@ class FullTextResults extends Movies {
       this.setState({
         data: nextProps.location.state.data.movies,
         total: nextProps.location.state.data.numRecords,
+        value: nextProps.location.state.value,
         search: "received"
       }, function () {
         this.setState({pages: Math.ceil(this.state.total / this.state.limit)})
