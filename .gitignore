@@ -1,3 +1,7 @@
 .idea
 cs122b/node_modules
 cs122b/build
+App/.gradle
+App/local.properties
+App/captures
+target

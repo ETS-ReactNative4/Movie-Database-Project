@@ -30,18 +30,29 @@ public class Login extends HttpServlet {
         try{
             Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
             Connection connection = Helper.connection();
+            String username = request.getParameter("username");
+            String password = request.getParameter("password");
             BufferedReader r = request.getReader();
             StringBuilder sbuild = new StringBuilder();
             String param = null;
             while((param = r.readLine()) != null){
                 sbuild.append(param);
             }
-            JSONObject credentials = new JSONObject(sbuild.toString());
-            String gRecaptchaResponse = credentials.getString("g_recaptcha_response");
-            System.out.println("gRecaptchaResponse=" + gRecaptchaResponse);
+            String userAgent = request.getHeader("User-Agent");
+            JSONObject credentials = new JSONObject();
+            if(username == null) {
+                credentials = new JSONObject(sbuild.toString());
+                // Only do recaptcha if not android
+                String gRecaptchaResponse = credentials.getString("g_recaptcha_response");
+                System.out.println("gRecaptchaResponse=" + gRecaptchaResponse);
 
-            // Verify reCAPTCHA
-            if (EmployeeLogin.RecaptchaVerify(ret, gRecaptchaResponse)) return;
+                // Verify reCAPTCHA
+                if (EmployeeLogin.RecaptchaVerify(ret, gRecaptchaResponse)) return;
+            }
+            else{
+                credentials.put("username", username);
+                credentials.put("password", password);
+            }
             credentials = Helper.isValidUser(connection, credentials);
             EmployeeLogin.VerifyCredentials(request, response, credentials);
             connection.close();
