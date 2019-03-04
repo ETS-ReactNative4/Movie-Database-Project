@@ -5,3 +5,6 @@ App/.gradle
 App/local.properties
 App/captures
 target
+mobile/.expo
+mobile/node_modules
+node_modules
