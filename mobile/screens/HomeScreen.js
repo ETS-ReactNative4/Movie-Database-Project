@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Button,
   Image,
   Platform,
   ScrollView,
@@ -8,8 +7,7 @@ import {
   Text,
   View, FlatList,
 } from 'react-native';
-import {WebBrowser} from 'expo';
-import {SearchBar, Card, ListItem, Divider, Icon} from 'react-native-elements';
+import {SearchBar, Card, ListItem, Divider, Icon, Button, ButtonGroup} from 'react-native-elements';
 import StarRating from "react-native-star-rating";
 
 function Stars(props) {
@@ -21,6 +19,7 @@ function Stars(props) {
     />
   ));
 }
+
 function Genres(props) {
   return props.genres.map((stuff, i) => (
     <ListItem
@@ -31,8 +30,15 @@ function Genres(props) {
   ));
 }
 
+function isEmpty(obj) {
+  for (var prop in obj) {
+    return false;
+  }
+  return true;
+}
+
+
 function Movie(props) {
-  console.log(props.item);
   let item = props.item;
   return (
     <Card title={item.title} titleStyle={{fontSize: 25}} image={require('../assets/images/movieicon.jpg')}>
@@ -52,7 +58,7 @@ function Movie(props) {
         rating={item.rating}
         fullStarColor={'grey'}
         starSize={25}
-        containerStyle={{paddingLeft:15, paddingTop: 10, paddingBottom: 10, paddingRight: 15}}
+        containerStyle={{paddingLeft: 15, paddingTop: 10, paddingBottom: 10, paddingRight: 15}}
       />
       <Divider/>
       <Stars stars={item.stars}/>
@@ -68,11 +74,13 @@ export default class HomeScreen extends React.Component {
   };
   state = {
     search: '',
-    data: {}
+    data: {},
+    offset: 0,
+    index: 2,
   };
 
   _handleSearch() {
-    fetch('https://ryanpadilla.us:8443/cs122b/fullsearch?query=' + this.state.search, {
+    fetch('https://ryanpadilla.us:8443/cs122b/fullsearch?query=' + this.state.search + '&offset=' + this.state.offset, {
       method: 'GET',
       credentials: 'include'
     }).then(
@@ -88,15 +96,24 @@ export default class HomeScreen extends React.Component {
       }
     );
   }
+  _navButtons(selected){
+    if(selected === 0 && (this.state.offset - 10) > 0){
+      this.setState({index: selected, offset: this.state.offset - 10}, function(){
+        console.log(this.state.offset);
+        this._handleSearch();
+      })
+    }
+    else if(selected === 1 && ((this.state.offset + 10) < this.state.data['numRecords'])){
+      this.setState({index: selected, offset: this.state.offset + 10}, function(){
+        console.log(this.state.offset);
+        this._handleSearch();
+      })
+    }
+  }
 
   render() {
     const {navigation} = this.props;
-    let data = navigation.getParam('data', 'nuthin');
-    let name = 'help';
-    if (data !== 'nuthin') {
-      console.log(data);
-      name = data.firstName;
-    }
+    const buttons = ['Prev 10', 'Next 10'];
 
     return (
       <View style={styles.container}>
@@ -107,7 +124,7 @@ export default class HomeScreen extends React.Component {
               Search Movies
             </Text>
           </View>
-          <View style={{marginHorizontal: 25}}>
+          <View style={{marginHorizontal: 10}}>
             <SearchBar
               placeholder={"Search..."}
               lightTheme={true}
@@ -120,6 +137,13 @@ export default class HomeScreen extends React.Component {
               onPress={() => this._handleSearch()}
             />
           </View>
+          {isEmpty(this.state.data) ? null :
+            <ButtonGroup
+              selectedIndex={this.state.index}
+              onPress={(item) => this._navButtons(item)}
+              buttons={buttons}
+              containerStyle={{height: 50}}
+            />}
           <FlatList
             data={this.state.data['movies']}
             renderItem={({item}) => <Movie item={item}/>}
