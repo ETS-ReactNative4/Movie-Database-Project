@@ -6,13 +6,61 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
-  AsyncStorage,
   View, FlatList,
 } from 'react-native';
 import {WebBrowser} from 'expo';
-import {MonoText} from '../components/StyledText';
-import {SearchBar} from 'react-native-elements';
+import {SearchBar, Card, ListItem, Divider, Icon} from 'react-native-elements';
+import StarRating from "react-native-star-rating";
+
+function Stars(props) {
+  return props.stars.map((stuff, i) => (
+    <ListItem
+      key={i}
+      title={stuff.name}
+      leftIcon={{name: 'person'}}
+    />
+  ));
+}
+function Genres(props) {
+  return props.genres.map((stuff, i) => (
+    <ListItem
+      key={i}
+      title={stuff}
+      leftIcon={{name: 'folder'}}
+    />
+  ));
+}
+
+function Movie(props) {
+  console.log(props.item);
+  let item = props.item;
+  return (
+    <Card title={item.title} titleStyle={{fontSize: 25}} image={require('../assets/images/movieicon.jpg')}>
+      <ListItem
+        key={'director'}
+        title={'Director: ' + item.director}
+        leftIcon={{name: 'movie'}}
+      />
+      <ListItem
+        key={'year'}
+        title={'Year: ' + item.year}
+        leftIcon={{name: 'date-range'}}
+      />
+      <StarRating
+        disabled={true}
+        maxStars={10}
+        rating={item.rating}
+        fullStarColor={'grey'}
+        starSize={25}
+        containerStyle={{paddingLeft:15, paddingTop: 10, paddingBottom: 10, paddingRight: 15}}
+      />
+      <Divider/>
+      <Stars stars={item.stars}/>
+      <Divider/>
+      <Genres genres={item.genres}/>
+    </Card>
+  );
+}
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -31,18 +79,10 @@ export default class HomeScreen extends React.Component {
       (res) => res.json()
     ).then(
       data => {
-        let movies = [];
-        Object.keys(data['movies']).forEach(function (key) {
-          movies.push({
-            key: data['movies'][key]['id'],
-            title: data['movies'][key]['title'],
-            description: 'Director: ' + data['movies'][key]['director'] + ', ' + data['movies'][key]['year'],
-            year: data['movies'][key]['year'],
-            movieid: data['movies'][key]['id'],
-          })
-        });
-        console.log(data);
-        this.setState({data: movies});
+        let d = {...data};
+        let movies = d['movies'].map((item, i) => Object.assign({}, item, {key: 'ky' + i}));
+        d['movies'] = movies;
+        this.setState({data: d});
         // const ret = {data, movies};
         // return ret;
       }
@@ -81,54 +121,13 @@ export default class HomeScreen extends React.Component {
             />
           </View>
           <FlatList
-            data={this.state.data}
-            renderItem={({item})=> <Text>{item.title}</Text>}
-            />
+            data={this.state.data['movies']}
+            renderItem={({item}) => <Movie item={item}/>}
+          />
         </ScrollView>
-
-        <View style={styles.tabBarInfoContainer}>
-          <Text style={styles.tabBarInfoText}>This is a tab bar. You can edit it in:</Text>
-
-          <View style={[styles.codeHighlightContainer, styles.navigationFilename]}>
-            <MonoText style={styles.codeHighlightText}>navigation/MainTabNavigator.js</MonoText>
-          </View>
-        </View>
       </View>
     );
   }
-
-  _maybeRenderDevelopmentModeWarning() {
-    if (__DEV__) {
-      const learnMoreButton = (
-        <Text onPress={this._handleLearnMorePress} style={styles.helpLinkText}>
-          Learn more
-        </Text>
-      );
-
-      return (
-        <Text style={styles.developmentModeText}>
-          Development mode is enabled, your app will be slower but you can use useful development
-          tools. {learnMoreButton}
-        </Text>
-      );
-    } else {
-      return (
-        <Text style={styles.developmentModeText}>
-          You are not in development mode, your app will run at full speed.
-        </Text>
-      );
-    }
-  }
-
-  _handleLearnMorePress = () => {
-    WebBrowser.openBrowserAsync('https://docs.expo.io/versions/latest/guides/development-mode');
-  };
-
-  _handleHelpPress = () => {
-    WebBrowser.openBrowserAsync(
-      'https://docs.expo.io/versions/latest/guides/up-and-running.html#can-t-see-your-changes'
-    );
-  };
 }
 
 const styles = StyleSheet.create({
