@@ -44,7 +44,7 @@ public class Login extends HttpServlet {
       if (username == null) {
         credentials = new JSONObject(sbuild.toString());
         // Only do recaptcha if not android
-        if (userAgent != null && (userAgent.contains("Android") || userAgent.contains("Expo"))) {
+        if (!(userAgent.contains("Android") || userAgent.contains("Expo"))) {
           String gRecaptchaResponse = credentials.getString("g_recaptcha_response");
           System.out.println("gRecaptchaResponse=" + gRecaptchaResponse);
 
