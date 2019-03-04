@@ -40,11 +40,12 @@ public class Login extends HttpServlet {
         sbuild.append(param);
       }
       String userAgent = request.getHeader("User-Agent");
+      System.out.println("UserAgent: "+userAgent);
       JSONObject credentials = new JSONObject();
       if (username == null) {
         credentials = new JSONObject(sbuild.toString());
         // Only do recaptcha if not android
-        if (!(userAgent.contains("Android") || userAgent.contains("Expo"))) {
+        if (!(userAgent.contains("Android") || userAgent.contains("okhttp/3.6.0"))) {
           String gRecaptchaResponse = credentials.getString("g_recaptcha_response");
           System.out.println("gRecaptchaResponse=" + gRecaptchaResponse);
 
