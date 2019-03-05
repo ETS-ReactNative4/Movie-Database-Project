@@ -23,7 +23,11 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier":  "com.ryanpadilla.fabflix"
+    },
+    "android": {
+      "package": "com.ryanpadilla.fabflix"
     }
   }
 }
