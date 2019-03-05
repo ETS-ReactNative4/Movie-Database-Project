@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Text,
   View, FlatList,
+  TouchableOpacity
 } from 'react-native';
 import {SearchBar, Card, ListItem, Divider, Icon, Button, ButtonGroup} from 'react-native-elements';
 import StarRating from "react-native-star-rating";
@@ -68,6 +69,7 @@ function Movie(props) {
   );
 }
 
+export {Movie, isEmpty};
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
     header: null,
@@ -96,23 +98,35 @@ export default class HomeScreen extends React.Component {
       }
     );
   }
-  _navButtons(selected){
-    if(selected === 0 && (this.state.offset - 10) > 0){
-      this.setState({index: selected, offset: this.state.offset - 10}, function(){
+
+  _navButtons(selected) {
+    console.log(this.state);
+    if (selected === 0 && (this.state.offset - 10) >= 0) {
+      this.setState({index: selected, offset: this.state.offset - 10}, function () {
         console.log(this.state.offset);
         this._handleSearch();
       })
     }
-    else if(selected === 1 && ((this.state.offset + 10) < this.state.data['numRecords'])){
-      this.setState({index: selected, offset: this.state.offset + 10}, function(){
+    else if (selected === 1 && ((this.state.offset + 10) < this.state.data['numRecords'])) {
+      this.setState({index: selected, offset: this.state.offset + 10}, function () {
         console.log(this.state.offset);
         this._handleSearch();
       })
     }
   }
+  _onCardPress(item){
+    this.props.navigation.navigate({routeName: 'Links', key: 'Links', params: {movie: item}});
+  }
+
+  // componentDidMount(){
+  //   const {navigation} = this.props;
+  //   let x = navigation.getParam("state", null);
+  //   if(x !== null){
+  //     this.setState({state})
+  //   }
+  // }
 
   render() {
-    const {navigation} = this.props;
     const buttons = ['Prev 10', 'Next 10'];
 
     return (
@@ -120,14 +134,13 @@ export default class HomeScreen extends React.Component {
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
 
           <View style={{justifyContent: "center", alignItems: "center",}}>
-            <Text style={{fontSize: 42, marginTop: 50}}>
+            <Text style={{fontSize: 42, marginTop: 30, marginBottom: 10}}>
               Search Movies
             </Text>
           </View>
           <View style={{marginHorizontal: 10}}>
             <SearchBar
               placeholder={"Search..."}
-              lightTheme={true}
               round={true}
               onChangeText={search => this.setState({search})}
               value={this.state.search}
@@ -135,6 +148,7 @@ export default class HomeScreen extends React.Component {
             <Button
               title={"Search"}
               onPress={() => this._handleSearch()}
+              buttonStyle={{backgroundColor: "lightseagreen"}}
             />
           </View>
           {isEmpty(this.state.data) ? null :
@@ -146,7 +160,11 @@ export default class HomeScreen extends React.Component {
             />}
           <FlatList
             data={this.state.data['movies']}
-            renderItem={({item}) => <Movie item={item}/>}
+            renderItem={({item}) =>
+              <TouchableOpacity onLongPress={() => this._onCardPress(item)}>
+                <Movie item={item}/>
+              </TouchableOpacity>
+            }
           />
         </ScrollView>
       </View>
