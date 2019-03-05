@@ -40,7 +40,6 @@ class Star extends Component {
                     console.log("Invalid session");
                 }
                 else{
-                    console.log("Logged in");
                     this.setState({valid: true});
                 }
                 this.setState({mounted:true});

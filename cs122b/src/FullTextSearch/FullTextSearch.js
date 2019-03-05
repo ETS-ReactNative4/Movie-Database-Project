@@ -6,7 +6,7 @@ import {Redirect} from "react-router";
 const search = value => fetch('https://' + window.location.hostname + ':8443/cs122b/fullsearch?query=' + value, {
   method: 'GET',
   credentials: 'include'
-}).then(
+}, console.log("Sending request")).then(
   (res) => res.json()
 ).then(
   data => {
@@ -57,9 +57,10 @@ class FullTextSearch extends Component {
     this.setState({isLoading: true, value});
     if (value.length < 3) return this.resetComponent();
     if(value in this.state.cache){
-      console.log("Using cache");
-      console.log(this.state.cache[value]['movies']);
+      console.log("Initializing search");
       setTimeout(() => {
+        console.log("Using cache");
+        console.log(this.state.cache[value]['movies']);
         this.setState({
           isLoading: false,
           results: this.state.cache[value]['movies'],
@@ -68,7 +69,6 @@ class FullTextSearch extends Component {
       }, 300);
     }
     else{
-      console.log("Sending request");
       const result = await searchDebounced(value);
       setTimeout(() => {
         let cache = {...this.state.cache};

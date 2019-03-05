@@ -58,7 +58,6 @@ class App extends Component {
     let cust = JSON.parse(sessionStorage.getItem("customer"));
     if (!isEmpty(cust)) {
       this.setState({customer: cust}, function () {
-        console.log(this.state);
       });
     }
   }
@@ -125,9 +124,11 @@ class App extends Component {
                 >
                   Employee Login
                 </Menu.Item>
-                <Menu.Item
-                as={FullTextSearch}
-                />
+                {isEmpty(this.state.customer) ? null:
+                  <Menu.Item
+                    as={FullTextSearch}
+                  />
+                }
               </Menu>
             }
             <Route path="/" exact render={(props) => <Movies {...props} handleAddToCart={this.handleAddToCart}/>}/>
