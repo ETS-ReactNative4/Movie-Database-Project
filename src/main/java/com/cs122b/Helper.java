@@ -3,15 +3,21 @@ package com.cs122b;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.*;
 import java.util.Iterator;
 
 import org.jasypt.util.password.StrongPasswordEncryptor;
+
+import static java.lang.System.out;
 
 public class Helper {
   static String loginUser = "username";
@@ -27,9 +33,34 @@ public class Helper {
     }
   }
 
-  static Connection connection() throws SQLException {
+  static Connection connection() throws SQLException, NamingException {
+    // the following few lines are for connection pooling
+    // Obtain our environment naming context
+
+    Context initCtx = new InitialContext();
+
+    Context envCtx = (Context) initCtx.lookup("java:comp/env");
+    if (envCtx == null)
+      out.println("envCtx is NULL");
+
+    // Look up our data source
+    DataSource ds = (DataSource) envCtx.lookup("jdbc/TestDB");
+
+    // the following commented lines are direct connections without pooling
+    //Class.forName("org.gjt.mm.mysql.Driver");
+    //Class.forName("com.mysql.jdbc.Driver").newInstance();
+    //Connection dbcon = DriverManager.getConnection(loginUrl, loginUser, loginPasswd);
+
+    if (ds == null)
+      out.println("ds is null.");
+
+    Connection dbcon = ds.getConnection();
+    if (dbcon == null)
+      out.println("dbcon is null.");
+
     // create database connection
-    return DriverManager.getConnection(loginUrl, loginUser, loginPasswd);
+    //return DriverManager.getConnection(loginUrl, loginUser, loginPasswd);
+    return dbcon;
   }
 
   static JSONObject getDatabaseSchema(Connection con) throws SQLException {
@@ -64,7 +95,7 @@ public class Helper {
       }
       database_structure.put(table, cols);
     }
-    System.out.println(database_structure);
+    out.println(database_structure);
     return database_structure;
   }
 
@@ -105,7 +136,7 @@ public class Helper {
       ResultSet resultSet = statement.getResultSet();
       while (resultSet.next()) {
         message.put(resultSet.getString("message"));
-        System.out.println(resultSet.getString("message"));
+        out.println(resultSet.getString("message"));
       }
     }
     JSONObject retval = new JSONObject();
@@ -185,7 +216,7 @@ public class Helper {
     }
     statement.setInt(2, Integer.parseInt(offset));
     statement.setInt(3, Integer.parseInt(limit));
-    System.out.println(statement.toString());
+    out.println(statement.toString());
     return statement.executeQuery();
   }
 
@@ -280,7 +311,7 @@ public class Helper {
       query = query + "ASC LIMIT ?, ?";
     }
     statement = con.prepareStatement(query);
-    System.out.println(query);
+    out.println(query);
     statement.setString(1, "%" + title + "%");
     statement.setString(2, "%" + year + "%");
     statement.setString(3, "%" + director + "%");
@@ -393,7 +424,7 @@ public class Helper {
               cookies) {
         c.setMaxAge(0);
         response.addCookie(c);
-        System.out.println(c.getName());
+        out.println(c.getName());
       }
       return false;
     } else if (!request.isRequestedSessionIdValid()) {
