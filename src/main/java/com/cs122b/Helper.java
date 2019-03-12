@@ -303,7 +303,7 @@ public class Helper {
       query = query + " ORDER BY rating ";
     } else {
 
-      query = query + " ORDER BY name ";
+      query = query + " ORDER BY title ";
     }
     if (order.equals("DESC")) {
       query = query + "DESC LIMIT ?, ?";
