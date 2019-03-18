@@ -124,11 +124,9 @@ class App extends Component {
                 >
                   Employee Login
                 </Menu.Item>
-                {isEmpty(this.state.customer) ? null:
-                  <Menu.Item
-                    as={FullTextSearch}
-                  />
-                }
+                <Menu.Item
+                  as={FullTextSearch}
+                />
               </Menu>
             }
             <Route path="/" exact render={(props) => <Movies {...props} handleAddToCart={this.handleAddToCart}/>}/>
