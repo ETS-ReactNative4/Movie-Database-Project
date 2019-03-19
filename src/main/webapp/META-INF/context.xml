@@ -15,5 +15,5 @@
   <Resource name="jdbc/TestDB" auth="Container" type="javax.sql.DataSource"
             maxTotal="100" maxIdle="30" maxWaitMillis="10000" username="username"
             password="password" driverClassName="com.mysql.jdbc.Driver"
-            url="jdbc:mysql://localhost:3306/moviedb?autoReconnect=true&amp;useSSL=false"/>
+            url="jdbc:mysql://13.57.232.109:3306,52.53.213.204:3306/moviedb?autoReconnect=true&amp;useSSL=false&amp;cachePrepStmts=true"/>
 </Context>

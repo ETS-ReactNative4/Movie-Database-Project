@@ -8,6 +8,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -17,6 +19,7 @@ import java.sql.ResultSet;
 public class SearchMovies extends HttpServlet {
     static class NumRecords {
         public int num;
+        public long jdbctime;
     }
     @Override
     protected void doOptions(HttpServletRequest req, HttpServletResponse resp)
@@ -28,6 +31,7 @@ public class SearchMovies extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        long startquerytime = System.nanoTime();
         response.setContentType("application/json");
         Helper.corsFix(response,request);
         PrintWriter ret = response.getWriter();
@@ -55,6 +59,16 @@ public class SearchMovies extends HttpServlet {
             encapsulator.put("movies", relatedMovies);
             connection.close();
             ret.println(encapsulator);
+            long endquerytime = System.nanoTime();
+            long totalQueryTime = endquerytime - startquerytime;
+            String filepath = getServletContext().getRealPath("/")+"times.csv";
+            System.out.println(filepath);
+            File outfile = new File(filepath);
+            outfile.createNewFile();
+            FileOutputStream ofile = new FileOutputStream(outfile, true);
+            String times = Long.toString(totalQueryTime)+", "+Long.toString(numRecords.jdbctime)+"\n";
+            ofile.write(times.getBytes());
+            ofile.close();
             ret.flush();
         }
         catch (Exception e){

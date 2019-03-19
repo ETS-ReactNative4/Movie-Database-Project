@@ -64,6 +64,7 @@ public class Helper {
   }
 
   static JSONObject getDatabaseSchema(Connection con) throws SQLException {
+    con.setReadOnly(true);
     JSONObject dtypes = new JSONObject();
 
     dtypes.put("12", "varchar");
@@ -100,6 +101,7 @@ public class Helper {
   }
 
   static JSONObject addGenre(Connection con, String genre_name) throws SQLException {
+    con.setReadOnly(false);
     JSONArray message = new JSONArray();
     String query = "{call add_genre(?)}";
     CallableStatement statement = con.prepareCall(query);
@@ -116,6 +118,7 @@ public class Helper {
   }
 
   static JSONArray getGenres(Connection con) throws SQLException {
+    con.setReadOnly(true);
     JSONArray genres = new JSONArray();
     String query = "select name from genres";
     Statement statement = con.createStatement();
@@ -127,6 +130,7 @@ public class Helper {
   }
 
   static JSONObject addStar(Connection con, String star_name, int star_dob) throws SQLException {
+    con.setReadOnly(false);
     JSONArray message = new JSONArray();
     String query = "{call add_star(?,?)}";
     CallableStatement statement = con.prepareCall(query);
@@ -145,6 +149,7 @@ public class Helper {
   }
 
   static JSONObject addMovie(Connection con, String title, String director, int year, String star, String genre) throws SQLException {
+    con.setReadOnly(false);
     JSONArray message = new JSONArray();
     String query = "{call add_movie(?,?,?,?,?)}";
     CallableStatement statement = con.prepareCall(query);
@@ -167,6 +172,7 @@ public class Helper {
 
   static ResultSet getBrowseMovies(Connection con, String genre, String letter, String offset,
                                    String limit, String sort, String order, SearchMovies.NumRecords numRecords) throws SQLException {
+    con.setReadOnly(true);
     PreparedStatement statement = null;
     sort = (sort != null) ? sort : "rating";
     order = (order != null) ? order : "DESC";
@@ -221,6 +227,7 @@ public class Helper {
   }
 
   static JSONObject getSalesRecords(Connection con, JSONObject sale) throws SQLException {
+    con.setReadOnly(false);
     JSONObject records = new JSONObject();
     Iterator<String> keys = sale.keys();
     PreparedStatement statement;
@@ -248,6 +255,7 @@ public class Helper {
   }
 
   static ResultSet getFullTextResults(Connection con, String queryString, int offset, SearchMovies.NumRecords numRecords) throws SQLException {
+    con.setReadOnly(true);
     String[] tokens = queryString.split(" ");
     StringBuilder query_builder = new StringBuilder();
     for (String tok :
@@ -269,6 +277,7 @@ public class Helper {
 
   static ResultSet getMovies(Connection con, String title, String year, String director, String star,
                              String offset, SearchMovies.NumRecords numRecords, String limit, String sort, String order) throws SQLException {
+    con.setReadOnly(true);
     // Turn all null strings into ""
     title = (title != null) ? title : "";
     year = (year != null) ? year : "";
@@ -318,16 +327,22 @@ public class Helper {
     statement.setString(4, "%" + star + "%");
     statement.setInt(5, Integer.parseInt(offset));
     statement.setInt(6, Integer.parseInt(limit));
-    return statement.executeQuery();
+    long startJDBC = System.nanoTime();
+    ResultSet resultSet = statement.executeQuery();
+    long endJDBC = System.nanoTime();
+    numRecords.jdbctime = endJDBC - startJDBC;
+    return resultSet;
   }
 
   static ResultSet getTwentyStars(Connection con) throws SQLException {
+    con.setReadOnly(true);
     Statement statement = con.createStatement();
     String query = "SELECT * from movies left join ratings on movies.id = ratings.movieId order by rating desc limit 20";
     return statement.executeQuery(query);
   }
 
   static ResultSet getGenres(Connection con, String id) throws SQLException {
+    con.setReadOnly(true);
     String genre_query = "SELECT name FROM genres where id in (select genreId from genres_in_movies where movieId=?)";
     PreparedStatement statement = con.prepareStatement(genre_query);
     statement.setString(1, id);
@@ -335,6 +350,7 @@ public class Helper {
   }
 
   static ResultSet getStars(Connection con, String id) throws SQLException {
+    con.setReadOnly(true);
     String star_query = "SELECT name, id FROM stars where id in (select starId from stars_in_movies where movieId=?)";
     PreparedStatement statement = con.prepareStatement(star_query);
     statement.setString(1, id);
@@ -342,6 +358,7 @@ public class Helper {
   }
 
   static ResultSet getSingleStar(Connection con, String id) throws SQLException {
+    con.setReadOnly(true);
     String query = "SELECT * from stars where id = ?";
     PreparedStatement statement = con.prepareStatement(query);
     statement.setString(1, id);
@@ -349,6 +366,7 @@ public class Helper {
   }
 
   static ResultSet getSingleMovie(Connection con, String id) throws SQLException {
+    con.setReadOnly(true);
     String query = "SELECT * from movies left join ratings on movies.id=ratings.movieId where movies.id=?";
     PreparedStatement statement = con.prepareStatement(query);
     statement.setString(1, id);
@@ -356,6 +374,7 @@ public class Helper {
   }
 
   static ResultSet getMovieTitles(Connection con, String id) throws SQLException {
+    con.setReadOnly(true);
     String movie_query = "SELECT title, id FROM movies where id in (select movieId from stars_in_movies where starId=?)";
     PreparedStatement statement = con.prepareStatement(movie_query);
     statement.setString(1, id);
@@ -363,6 +382,7 @@ public class Helper {
   }
 
   static JSONObject isValidEmployee(Connection con, JSONObject data) throws SQLException {
+    con.setReadOnly(true);
     JSONObject employee = null;
     String query = "SELECT * from employees where email=?";
     PreparedStatement statement = con.prepareStatement(query);
@@ -381,6 +401,7 @@ public class Helper {
   }
 
   static JSONObject isValidUser(Connection con, JSONObject data) throws SQLException {
+    con.setReadOnly(true);
     JSONObject customer = null;
     String query = "SELECT customers.id, customers.password, customers.firstName, customers.lastName, ccId, email, address, email, expiration" +
             "  from customers INNER JOIN creditcards on customers.ccId=creditcards.id WHERE email=?";
