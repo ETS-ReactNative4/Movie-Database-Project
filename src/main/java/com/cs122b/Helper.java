@@ -34,8 +34,8 @@ public class Helper {
   }
 
   static Connection connection() throws SQLException, NamingException {
-    // the following few lines are for connection pooling
-    // Obtain our environment naming context
+//     the following few lines are for connection pooling
+//     Obtain our environment naming context
 
     Context initCtx = new InitialContext();
 
@@ -43,7 +43,8 @@ public class Helper {
     if (envCtx == null)
       out.println("envCtx is NULL");
 
-    // Look up our data source
+    // Look up our data source (uncomment below line and comment following if on instance 1)
+    //DataSource ds = (DataSource) envCtx.lookup("jdbc/moviedb");
     DataSource ds = (DataSource) envCtx.lookup("jdbc/TestDB");
 
     // the following commented lines are direct connections without pooling
@@ -59,7 +60,7 @@ public class Helper {
       out.println("dbcon is null.");
 
     // create database connection
-    //return DriverManager.getConnection(loginUrl, loginUser, loginPasswd);
+//    return DriverManager.getConnection(loginUrl, loginUser, loginPasswd);
     return dbcon;
   }
 
@@ -327,8 +328,40 @@ public class Helper {
     statement.setString(4, "%" + star + "%");
     statement.setInt(5, Integer.parseInt(offset));
     statement.setInt(6, Integer.parseInt(limit));
-    long startJDBC = System.nanoTime();
+
+      // This is for the non-prep statements
+//    Statement statement = con.createStatement();
+//    // Turn all null strings into ""
+//    title = (title != null) ? title : "";
+//    year = (year != null) ? year : "";
+//    director = (director != null) ? director : "";
+//    star = (star != null) ? star : "";
+//    offset = (offset != null) ? offset : "0";
+//    limit = (limit != null) ? limit : "10";
+//    sort = (sort != null) ? sort : "rating";
+//    order = (order != null) ? order : "DESC";
+//
+//
+//    String query = "Select distinct id, title, `year`, director, rating FROM "+
+//            "(SELECT movies.id, title, `year`, director, rating, starId, `name` " +
+//            "FROM stars_in_movies " +
+//            "INNER JOIN movies " +
+//            "ON stars_in_movies.movieId = movies.id " +
+//            "INNER JOIN stars " +
+//            "ON stars_in_movies.starId = stars.id " +
+//            "left join ratings " +
+//            "ON movies.id = ratings.movieId WHERE title LIKE '%"+title+
+//            "%' AND `year` LIKE '%"+year+"%' AND director LIKE '%"+director+
+//            "%' AND `name` LIKE '%"+star+"%') as records";
+//    String totalCount = "Select count(*) as count from ("+query+") as distinctrecords";
+//    ResultSet res = statement.executeQuery(totalCount);
+//    res.next();
+//    numRecords.num = res.getInt("count");
+//    query = query + " ORDER BY "+sort+" "+order+" LIMIT "+offset+", "+limit;
+//    System.out.println(query);
+//    ResultSet resultSet = statement.executeQuery(query);
     ResultSet resultSet = statement.executeQuery();
+    long startJDBC = System.nanoTime();
     long endJDBC = System.nanoTime();
     numRecords.jdbctime = endJDBC - startJDBC;
     return resultSet;
