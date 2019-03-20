@@ -1,0 +1,114 @@
+ <!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+    background-color: linen;
+}
+
+td {
+    border-top-style: solid;
+}
+</style>
+</head>
+<body>
+
+<table style="width:100%">
+  <tr style="font-weight:bold; background-color: orange">
+    <td width="300px">Single-instance version cases</td>
+    <td>Graph Results Screenshot</td>
+    <td>Average Query Time(ms)</td>
+    <td>Average Search Servlet Time(ms)</td>
+    <td>Average JDBC Time(ms)</td>
+    <td>Analysis</td>
+  </tr>
+  <tr>
+    <td>Case 1: HTTP/1 thread</td>
+    <td><img src="./datafiles/singleinstance1threads.PNG" alt="Graph Results Screenshot Case 1" style="width:304px;height:228px;"></td>
+    <td>204</td>
+    <td>8.94740361014383</td>
+    <td>3.9332522626797877</td>
+    <td>This had the fastest performance by far, didn't have to manage multiple connections at once since just one user and no re-routing to jdbc connection pool</td>
+  </tr>
+  <tr>
+    <td>Case 2: HTTP/10 threads</td>
+    <td><img src="./datafiles/singleinstance10threads.PNG" alt="Graph Results Screenshot Case 2" style="width:304px;height:228px;"></td>
+    <td>241</td>
+    <td>22.759181578728235</td>
+    <td>11.712905651778955</td>
+    <td>Took longer than previous, has to manage multiple connections at once</td>
+  </tr>
+  <tr>
+    <td>Case 3: HTTPS/10 threads</td>
+    <td><img src="./datafiles/singleinstance10httpsthreads.PNG" alt="Graph Results Screenshot Case 3" style="width:304px;height:228px;"></td>
+    <td>204</td>
+    <td>33.88420589515518</td>
+    <td>18.131305300529903</td>
+    <td>This one was interesting, the request part before the servlet was hit must have been much faster than usual, because it took much longer than the rest to run servlet wise and jdbc wise</td>
+  </tr>
+  <tr>
+    <td>Case 4: HTTP/10 threads/No prepared statements</td>
+    <td><img src="./datafiles/singleinstance10threadsnoprep.PNG" alt="Graph Results Screenshot Case 4" style="width:304px;height:228px;"></td>
+    <td>225</td>
+    <td>24.846909814155943</td>
+    <td>13.228919939061317</td>
+    <td>Compared to standard 10 threads, this is longer servlet wise and jdbc wise, although not by much. It is however shorter on the overall query, I'm not sure why that is.</td>
+  </tr>
+  <tr>
+    <td>Case 5: HTTP/10 threads/No connection pooling</td>
+    <td><img src="./datafiles/singleinstance10threadsnopool.PNG" alt="Graph Results Screenshot Case 4" style="width:304px;height:228px;"></td>
+    <td>239</td>
+    <td>31.99425081339894</td>
+    <td>16.33727211619985</td>
+    <td>As a whole, this one was longest far overall, still shorter than https in servlet and jdbc time though. Since it has to wait for a connection to free up this is expected behaviour</td>
+  </tr>
+
+</table> 
+
+
+<table style="width:100%">
+  <tr style="font-weight:bold; background-color: orange">
+    <td width="300px">Scaled version cases</td>
+    <td>Graph Results Screenshot</td>
+    <td>Average Query Time(ms)</td>
+    <td>Average Search Servlet Time(ms)</td>
+    <td>Average JDBC Time(ms)</td>
+    <td>Analysis</td>
+  </tr>
+  <tr>
+    <td>Case 1: HTTP/1 thread</td>
+    <td><img src="./datafiles/scaled1thread.PNG" alt="Graph Results Screenshot Case 1" style="width:304px;height:228px;"></td>
+    <td>210</td>
+    <td>15.719573362225587</td>
+    <td>4.8013016521574565</td>
+    <td>What I found interesting was that the scaled versions were still slower overall than the single instance counterpart. It wasn't that much, a few milliseconds difference, but that might be due to having to switch between different jdbc connections over network</td>
+  </tr>
+  <tr>
+    <td>Case 2: HTTP/10 threads</td>
+    <td><img src="./datafiles/scaled10threads.PNG" alt="Graph Results Screenshot Case 2" style="width:304px;height:228px;"></td>
+    <td>254</td>
+    <td>30.79191960749432</td>
+    <td>13.374706271385314</td>
+    <td>Same case as before, slightly longer than the single instance counterpart, but mirroring behavior and off by a few milliseconds only</td>
+  </tr>
+  <tr>
+    <td>Case 3: HTTP/10 threads/No prepared statements</td>
+    <td><img src="./datafiles/scaled10threadsnoprep.PNG" alt="Graph Results Screenshot Case 4" style="width:304px;height:228px;"></td>
+    <td>242</td>
+    <td>25.952001410673734</td>
+    <td>11.4033365003785</td>
+    <td>I think this might just be due to load difference or something, not sure why total time would be off by this amount. Prepared statements might just take a little bit longer to prepare maybe that's why it's slower</td>
+  </tr>
+  <tr>
+    <td>Case 4: HTTP/10 threads/No connection pooling</td>
+    <td><img src="./datafiles/scaled10threadsnopool.PNG" alt="Graph Results Screenshot Case 4" style="width:304px;height:228px;"></td>
+    <td>271</td>
+    <td>16.7471447993944</td>
+    <td>6.249954126040878</td>
+    <td>Much faster on the servlet end, but overall longer on average query time. I'm not entirely sure why this is, more than likely since half queries go to slave and other to master and they're only using localhost for db, it's much faster since they don't communicate that extra little bit over the network. This doesn't account for why the total time is slower though.</td>
+  </tr>
+
+</table> 
+
+</body>
+</html>

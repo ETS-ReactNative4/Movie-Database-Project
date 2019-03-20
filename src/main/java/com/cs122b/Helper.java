@@ -44,7 +44,7 @@ public class Helper {
       out.println("envCtx is NULL");
 
     // Look up our data source (uncomment below line and comment following if on instance 1)
-    //DataSource ds = (DataSource) envCtx.lookup("jdbc/moviedb");
+//    DataSource ds = (DataSource) envCtx.lookup("jdbc/moviedb");
     DataSource ds = (DataSource) envCtx.lookup("jdbc/TestDB");
 
     // the following commented lines are direct connections without pooling
@@ -359,8 +359,8 @@ public class Helper {
 //    numRecords.num = res.getInt("count");
 //    query = query + " ORDER BY "+sort+" "+order+" LIMIT "+offset+", "+limit;
 //    System.out.println(query);
-//    ResultSet resultSet = statement.executeQuery(query);
     long startJDBC = System.nanoTime();
+//    ResultSet resultSet = statement.executeQuery(query);
     ResultSet resultSet = statement.executeQuery();
     long endJDBC = System.nanoTime();
     numRecords.jdbctime = endJDBC - startJDBC;
