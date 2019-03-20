@@ -360,8 +360,8 @@ public class Helper {
 //    query = query + " ORDER BY "+sort+" "+order+" LIMIT "+offset+", "+limit;
 //    System.out.println(query);
 //    ResultSet resultSet = statement.executeQuery(query);
-    ResultSet resultSet = statement.executeQuery();
     long startJDBC = System.nanoTime();
+    ResultSet resultSet = statement.executeQuery();
     long endJDBC = System.nanoTime();
     numRecords.jdbctime = endJDBC - startJDBC;
     return resultSet;
