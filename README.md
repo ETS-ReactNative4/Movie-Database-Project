@@ -11,3 +11,5 @@ Here's a list of the many different things I had to implement in this project:
 * Verified SSL certificate using LetsEncrypt, mostly to allow mobile app to connect as React Native doesn't play well with self signed
 * Enabled logged in customers to "purchase" items by clicking plus on movie cards and then visiting the checkout page, verified information for customer as well, pre-filling some of their billing information
 * Deployed React Native app using Expo, worked on both Android and iOS.
+
+Website is currently down, as I was using my personal domain name for use but I plan on bringing it back online shortly.
